@@ -45,7 +45,7 @@ include 'header.php'; // 集成中心验证文件（核心安全控制）
          <div class="form-section">
             <div class="node-url">
                 <h3>新增节点</h3> <!-- 大标题（第一行） -->
-                <a href="https://re.xcdream.com/links/qiafan">✈️购买服务器</a>
+                <a href="https://re.xcdream.com/links/qiafan" target="_blank>✈️购买服务器</a>
             </div>
              <form id="nodeAddForm">
                  <div class="node-adds-2">
