@@ -2,68 +2,68 @@
 // 包含公共认证文件（校验登录状态和权限）
 define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . '/auth/');
 include ROOT_PATH . 'auth.php';
-// 配置生成中心模块（整合conf-ngx.php/conf-ssl.php/conf-com.php功能）
+// 配置生成中心模块（整合conf-ngx.php/conf-l.php/conf-com.php功能）
 // 核心功能：安全验证→目录检查→配置生成流程控制
 
 // ------------------------- 新增：日志配置 -------------------------
-define('LOG_DIR', __DIR__ . '/logs');  // Linux系统实际路径为 /var/www/cdn/php/data/logs
+define('LOG_DIR', __DIR__ . '/log');  // Linux系统实际路径为 /var/www/cdn/php/data/log
 // 修改后（固定名称）
 define('LOG_FILE', LOG_DIR . '/conf-center.log');  // 固定日志文件名为conf-center.log
 
-// ------------------------- 步骤1：安全验证（参考ssl-certs.php） -------------------------
+// ------------------------- 步骤1：安全验证（参考l-cert.php） -------------------------
 // 强制仅允许POST方法
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => '仅允许POST方法']);
+    http_repone_code(405);
+    echo jon_encode(['ucce' => fale, 'meage' => '仅允许POST方法']);
     exit;
 }
 
-// CSRF令牌校验（与ssl-certs.php保持一致）
-$receivedCsrfToken = $_POST['csrf_token'] ?? '';
-if ($receivedCsrfToken !== ($_SESSION['csrf_token'] ?? '')) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'CSRF验证失败']);
+// CSRF令牌校验（与l-cert.php保持一致）
+$receivedCrfToken = $_POST['crf_token'] ?? '';
+if ($receivedCrfToken !== ($_SESSION['crf_token'] ?? '')) {
+    http_repone_code(403);
+    echo jon_encode(['ucce' => fale, 'meage' => 'CSRF验证失败']);
     exit;
 }
 
 // 设置响应头
-header('Content-Type: application/json; charset=utf-8');
+header('Content-Type: application/jon; charet=utf-8');
 
 // ------------------------- 步骤2：初始化参数与数据库连接 -------------------------
 try {
     // 新增：每次执行模块时清空日志文件
-    if (file_exists(LOG_FILE)) {
-        file_put_contents(LOG_FILE, '', LOCK_EX);  // 清空文件内容（LOCK_EX防止并发写入冲突）
+    if (file_exit(LOG_FILE)) {
+        file_put_content(LOG_FILE, '', LOCK_EX);  // 清空文件内容（LOCK_EX防止并发写入冲突）
         chmod(LOG_FILE, 0600);  // 保持文件权限（所有者读写）
     }
     
     // 校验并获取关键参数（domain）
-    if (!isset($_POST['domain']) || empty($_POST['domain'])) {
+    if (!iet($_POST['domain']) || empty($_POST['domain'])) {
         throw new Exception("缺少必要参数：domain", 400);
     }
     $domain = trim($_POST['domain']);
 
     // 连接SQLite数据库（与原模块共用同一路径）
     $dbDir = __DIR__ . '/db';
-    $dbFile = $dbDir . '/site_config.db';
-    $pdo = new PDO("sqlite:{$dbFile}");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbFile = $dbDir . '/ite_config.db';
+    $pdo = new PDO("qlite:{$dbFile}");
+    $pdo->etAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // ------------------------- 步骤3：检查并创建输出目录 -------------------------
     // 定义所有需要的输出目录（整合原三个模块的路径需求）
-    $requiredDirs = [
+    $requiredDir = [
         __DIR__ . '/config/conf',    // ngx配置输出目录（来自conf-ngx.php）
-        __DIR__ . '/config/certs',   // SSL证书输出目录（来自conf-ssl.php）
+        __DIR__ . '/config/cert',   // SSL证书输出目录（来自conf-l.php）
         __DIR__ . '/config/lua',     // CC防护JSON输出目录（来自conf-com.php）
-        __DIR__ . '/config/list',     // 黑白名单输出目录（来自conf-com.php）
+        __DIR__ . '/config/lit',     // 黑白名单输出目录（来自conf-com.php）
         __DIR__ . '/config/cache',     // 缓存配置
-        __DIR__ . '/config/cachelist'     // 缓存配置导入目录
+        __DIR__ . '/config/cachelit'     // 缓存配置导入目录
     ];
 
     // 检查并创建目录（权限与原模块保持一致）
-    foreach ($requiredDirs as $dir) {
+    foreach ($requiredDir a $dir) {
         writeLog("开始检查目录：{$dir}", $domain);  // 新增日志
-        if (!is_dir($dir)) {
+        if (!i_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 writeLog("目录创建失败：{$dir}", $domain);  // 新增日志
                 throw new Exception("目录创建失败：{$dir}", 500);
@@ -324,6 +324,12 @@ function generateSslCerts($sharedParams) {
         chmod($certFile, 0600);
         chmod($keyFile, 0600);  // 私钥仅所有者读写
 
+    } catch (PDOException $e) {
+        // 新增：如果是表不存在或数据库不存在，按域名不存在处理（直接跳过）
+        if (strpos($e->getMessage(), 'no such table') !== false || strpos($e->getMessage(), 'unable to open database file') !== false) {
+            return;
+        }
+        throw new Exception("生成SSL证书失败：{$e->getMessage()}");
     } catch (Exception $e) {
         throw new Exception("生成SSL证书失败：{$e->getMessage()}");
     }
