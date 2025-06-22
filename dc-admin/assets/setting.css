@@ -1,0 +1,224 @@
+#questionsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 外层滚动容器，负责横向滚动和最小宽度 */
+.table-scroll-x {
+    overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
+    scrollbar-color: #bdbdbd #f5f7fa;
+    scrollbar-width: thin;
+    padding: 0 20px;
+}
+#questionsTableContainer {
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.questions-tip {
+    margin: 32px 0 16px 0;
+    color: #888;
+    font-size: 16px;
+    text-align: center;
+}
+#questionsTable {
+    width: 100%;      /* 让表格宽度占满容器 */
+    min-width: 800px;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+/* 移动端适配 */
+@media (max-width: 1000px) {
+    #questionsTableContainer {
+        min-width: 800px;
+    }
+    #questionsTable {
+        min-width: 800px;
+    }
+    .table-scroll-x {
+        padding: 0 2vw;
+    }
+}
+#questionsTable th, #questionsTable td {
+    border: 1px solid #e0e0e0;
+    padding: 8px 6px;
+    text-align: left;
+}
+#questionsTable th {
+    background: #f5f7fa;
+    font-weight: 600;
+}
+.options-area {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+.option-row input[type="text"] {
+    width: 70px;
+    padding: 2px 4px;
+}
+.addOptBtn, .delOptBtn, .delQuestionBtn{
+    background: #2196f3;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 3px 8px;
+    margin: 2px 0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+.addOptBtn:hover, .delOptBtn:hover, .delQuestionBtn:hover{
+    background: #1769aa;
+}
+.setting-alert {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    opacity: 0.98;
+}
+
+.better-input {
+    width: 100%;
+    min-width: 60px;
+    max-width: 220px;
+    box-sizing: border-box;
+    padding: 5px 8px;
+    border: 1px solid #bdbdbd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border 0.2s;
+    background: #f9fafb;
+}
+.better-input:focus {
+    border: 1.5px solid #2196f3;
+    background: #fff;
+    outline: none;
+}
+/* 建议放到 ./assets/setting.css */
+.install-mode-panel {
+    background: #f8fafd;
+    border: 1px solid #e3e8ee;
+    margin: 10px 20px 20px 20px;
+    border-radius: 8px;
+    padding: 22px 28px 18px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.install-mode-status {
+    font-size: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+}
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background: #e3e8ee;
+}
+.status-on {
+    background: #22b573;
+}
+.status-off {
+    background: #e53e3e;
+}
+.status-text {
+    font-weight: bold;
+    color: #22b573;
+}
+
+.btn-install, .btn-close-install {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 7px 22px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-install[disabled] {
+    background: #b3b3b3;
+    cursor: not-allowed;
+}
+.btn-close-install {
+    background: #e53e3e;
+}
+.btn-close-install:hover {
+    background: #c53030;
+}
+.install-command-block {
+    margin-top: 10px;
+}
+.install-command-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+}
+.install-command {
+    background: #222;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+    font-size: 15px;
+    word-break: break-all;
+}
+
+/* 建议添加到 setting.css */
+.install-command-block > .install-warning {
+    background: #fff8e1;
+    color: #b26a00;
+    border: 1px solid #ffe082;
+    border-radius: 5px;
+    padding: 10px 16px;
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.install-warning::before {
+    content: "⚠";
+    font-size: 18px;
+    color: #ff9800;
+    margin-right: 4px;
+}
+
+.copy-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 14px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.copy-btn:hover {
+    background: #1746a2;
+}
+.ml-10 { margin-left: 10px; }

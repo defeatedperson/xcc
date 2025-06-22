@@ -1,0 +1,130 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h1 {
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #ff4d4f;
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #fff2f0;
+    border-radius: 4px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    color: #333333;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #40a9ff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+input[type="submit"] {
+    background-color: #1890ff;
+    color: #ffffff;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #40a9ff;
+}
+
+/* 新增文字颜色样式 */
+.xcc-text {
+    color: #2196F3; /* 亮蓝色（与页面主色一致） */
+    font-weight: 700; /* 可选：加粗提升对比度 */
+}
+
+.protect-text {
+    color: #1a1a1a; /* 黑色（与原标题色一致） */
+}
+
+ /* 移动端适配（宽度≤768px） */
+ @media (max-width: 768px) {
+    .login-container {
+        max-width: 90%; /* 容器宽度占满屏幕90% */
+        padding: 1.5rem; /* 减少内边距 */
+    }
+
+    h1 {
+        font-size: 1.4rem; /* 标题字体缩小 */
+        margin-bottom: 1.2rem;
+    }
+
+    label {
+        font-size: 0.9rem; /* 标签字体缩小 */
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        padding: 0.9rem; /* 增大输入框点击区域 */
+        font-size: 15px; /* 输入文字增大 */
+        margin-bottom: 1.2rem; /* 输入框间距调整 */
+    }
+
+    input[type="submit"] {
+        padding: 0.9rem; /* 按钮点击区域增大 */
+        font-size: 16px; /* 按钮文字保持清晰 */
+    }
+
+    .error-message {
+        font-size: 0.85rem; /* 错误提示文字缩小 */
+        padding: 0.4rem; /* 提示框内边距减少 */
+    }
+}
+
+.login-tip {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+}
+.login-agreement-link {
+    color: #2563eb;
+    text-decoration: underline;
+}

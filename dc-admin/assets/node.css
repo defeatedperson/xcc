@@ -1,0 +1,317 @@
+/* 公共表格基础样式 */
+.main-content table {
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+.node-list {
+    min-width: 800px; /* 关键：设置表格最小宽度（根据列数调整） */
+}
+.update-list {
+    min-width: 600px; /* 关键：设置表格最小宽度（根据列数调整） */
+}
+.block-list {
+    min-width: 300px; /* 关键：设置表格最小宽度（根据列数调整） */
+}
+.main-content th, 
+.main-content td {
+    padding: 12px 8px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+/* 新增：表格容器滚动控制 */
+.table-container {
+    overflow-x: auto; /* 关键：宽度不足时显示横向滚动条 */
+    padding: 0 20px 20px; /* 容器内边距，避免滚动条贴边 */
+    margin-top: 0px;
+    -webkit-overflow-scrolling: touch; /* 关键：增强移动端滚动体验 */
+}
+
+.node-url {
+    display: flex;
+    gap: 5px;
+}
+.node-url a {
+    color: #1976D2;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+
+/* 节点列表专属样式（第1个main-content） */
+.node-list th:nth-child(1) { width: 8%; }   /* ID列宽度 */
+.node-list th:nth-child(2) { width: 15%; }  /* 名称列宽度 */
+.node-list th:nth-child(3) { width: 20%; }  /* 更新时间 */
+.node-list th:nth-child(4) { width: 20%; }  /* IP列宽度 */
+.node-list th:nth-child(5) { width: 20%; }  /* 密钥列宽度 */
+.node-list th:nth-child(6) { width: 17%; }  /* 操作列宽度 */
+
+/* 封禁列表专属样式（第2个main-content） */
+.block-list th:nth-child(1) { width: 30%; } /* 封禁时间列宽度 */
+.block-list th:nth-child(2) { width: 70%; } /* 封禁IP列宽度 */
+
+
+/* 新增：密钥显示和复制按钮样式 */
+.key-display {
+    cursor: pointer;
+    color: #2196F3;
+    display: inline-flex; /* 保证与按钮基线对齐 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
+.btn-copy {
+    margin-left: 5px;
+    padding: 2px 8px; /* 调整内边距更协调 */
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    vertical-align: middle;
+    display: inline-flex; /* 与文本行内弹性布局 */
+    align-items: center; /* 垂直居中 */
+    height: 1.4em; /* 保持与文本高度一致 */
+}
+
+.btn-copy:hover {
+    background-color: #1976D2;
+}
+
+/* 操作按钮美化 */
+.btn-edit, .btn-delete,.btn-delete-sync {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.btn-edit {
+    background-color: #4CAF50; /* 绿色系 */
+    color: white;
+    margin-right: 5px; /* 与删除按钮间距 */
+}
+
+.btn-edit:hover {
+    background-color: #45a049;
+}
+
+.btn-delete,.btn-delete-sync {
+    background-color: #f44336; /* 红色系 */
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #da190b;
+}
+
+.node-adds-2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+/* 表单区域基础样式（补充调整） */
+.form-section {
+    animation: slideInDown 0.6s ease-out forwards;
+    display: none;  /* 默认隐藏 */
+    margin: 20px 15px;
+    padding: 25px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #2196F3;
+}
+
+
+/* 输入组样式（小标题+输入框） */
+.form-group {
+    width: 30%;
+}
+@media (max-width: 768px) {
+    .form-group {
+        width: 100%;
+    }
+}
+
+/* 小标题（label）样式 */
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* 输入框样式（保持原有） */
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #8fbaf1;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* 提交按钮样式 */
+.submit-btn {
+    margin-top: 15px;
+    padding: 5px 15px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* 新增：取消按钮样式 */
+.cancel-btn {
+    margin-top: 15px;
+    margin-left: 10px;
+    padding: 5px 15px;
+    background: #f44336; /* 红色系，与删除按钮保持风格一致 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background: #1976D2;
+}
+
+.cancel-btn:hover {
+    background: #da190b; /* 鼠标悬停颜色加深 */
+}
+
+/* 密钥输入框组布局 */
+.key-input-group {
+    display: flex;
+    gap: 8px;  /* 输入框与按钮间距 */
+}
+
+/* 生成密钥按钮样式 */
+.generate-key-btn {
+    padding: 0 15px;
+    background: #4CAF50;  /* 绿色系，与操作按钮区分 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;  /* 防止文字换行 */
+}
+
+.generate-key-btn:hover {
+    background: #45a049;  /* 鼠标悬停颜色加深 */
+}
+
+/* 节点控制台 */
+.operation-area {
+    display: none;
+    padding: 20px;  /* 增加内边距 */
+    border-radius: 8px;  /* 圆角美化 */
+    background-color: #f8f9fa;  /* 浅灰背景区分区域 */
+}
+
+/* 按钮通用样式 */
+.operation-area .button-group {
+    display: flex;
+    gap: 12px;
+}
+.button-group {
+    display: flex;
+    align-items: center;  /* 垂直居中 */
+    gap: 15px;  /* 元素间距 */
+    margin-bottom: 15px;  /* 与分割线间距 */
+}
+/* 文字提示样式（如"快捷操作"） */
+.button-group > div {
+    font-weight: 600;  /* 加粗文字 */
+    color: #333;  /* 深灰文字 */
+    white-space: nowrap;  /* 防止文字换行 */
+}
+.operation-area .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+.operation-area .btn:hover {
+    opacity: 0.9;
+}
+
+/* 启动按钮（绿色） */
+.operation-area .btn-start {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* 停止按钮（红色） */
+.operation-area .btn-stop {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 重启按钮（蓝色） */
+.operation-area .btn-restart {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* 新增分割线样式 */
+.operation-divider {
+    border: 0;
+    height: 1px;
+    background: #e5e7eb;  /* 浅灰分割线 */
+    margin: 15px 0;  /* 上下边距 */
+}
+.log-nodes {
+    display: flex;
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-x: auto; /* 横向溢出时出现滚动条，适配移动端 */
+    -webkit-overflow-scrolling: touch; /* 增强移动端滑动体验 */
+    width: 100%;
+}
+
+.log-node {
+    padding: 5px 16px;
+    width: 100%; /* 横向占满父容器 */
+    max-height: 300px; /* 设置最大高度，超出时出现纵向滚动条 */
+    overflow-y: auto;  /* 纵向滚动条 */
+    overflow-x: auto;  /* 横向滚动条，内容过宽时可滑动 */
+    box-sizing: border-box;
+    text-align: left;  /* 内容左对齐 */
+    font-family: "Consolas", "Menlo", "Monaco", monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    background: transparent;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .log-node {
+        font-size: 12px;
+        padding: 5px 8px;
+        min-width: 220px;
+        max-height: 180px;
+    }
+}

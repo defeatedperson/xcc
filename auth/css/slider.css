@@ -1,0 +1,94 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f2f5;
+}
+
+
+.popup-wrapper {
+    background: #ffffff;
+    padding: 24px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    width: 90%; /* 默认桌面端宽度 */
+    max-width: 400px; /* 桌面端最大宽度 */
+    position: relative;
+}
+
+.slider-container {
+    width: 100%; /* 改为容器宽度的100% */
+    height: 50px;
+    background-color: #e6e8eb;
+    position: relative;
+    border-radius: 25px;
+    overflow: hidden;
+    /* 新增：随机背景线条 */
+    background-image: linear-gradient(45deg, transparent 49%, rgba(0,0,0,0.05) 49%, rgba(0,0,0,0.05) 51%, transparent 51%),
+                      linear-gradient(-45deg, transparent 49%, rgba(0,0,0,0.05) 49%, rgba(0,0,0,0.05) 51%, transparent 51%);
+    background-size: 20px 20px;
+}
+
+.slider {
+    width: 50px;
+    height: 50px;
+    background-color: #1890ff;
+    position: absolute;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: left 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.target-area {
+    height: 50px;
+    width: 20px;
+    background-color: #ff4d4f;
+    position: absolute;
+    border-radius: 25px;
+    opacity: 0.8; 
+}
+
+.error-message {
+    color: #ff4d4f;
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: center;
+}
+
+h1 {
+    color: #262626;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+    text-align: center;
+}
+
+/* 移动端适配 */
+@media (max-width: 576px) {
+    .popup-wrapper {
+        width: 94%; /* 小屏幕拉伸窗口 */
+        padding: 20px 16px; /* 减少内边距 */
+        border-radius: 8px; /* 更圆润的圆角 */
+    }
+    
+    h1 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .slider-container {
+        height: 44px; /* 更小的高度适配移动端手指操作 */
+    }
+    
+    .slider {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .target-area {
+        height: 44px;
+    }
+}
