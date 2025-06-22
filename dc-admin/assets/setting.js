@@ -4,6 +4,212 @@ window.onload = function() {
         showAlert('error', 'CSRF令牌未获取，请刷新页面或重新登录');
         return;
     }
+
+    // 上传表单事件绑定
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) {
+        uploadForm.onsubmit = function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('zipFileInput');
+            const status = document.getElementById('uploadStatus');
+            status.textContent = '';
+            status.style.color = '#888';
+
+            if (!fileInput.files.length) {
+                status.textContent = '请选择zip文件';
+                status.style.color = '#e53e3e';
+                return;
+            }
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                status.textContent = '只允许上传zip文件';
+                status.style.color = '#e53e3e';
+                return;
+            }
+            if (file.size > 50 * 1024 * 1024) {
+                status.textContent = '文件大小不能超过50MB';
+                status.style.color = '#e53e3e';
+                return;
+            }
+
+            status.textContent = '上传中...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
+
+            fetch('/sys-upload.php', {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    status.textContent = '上传成功';
+                    status.style.color = '#22b573';
+                } else {
+                    status.textContent = data.message || '上传失败';
+                    status.style.color = '#e53e3e';
+                }
+            }).catch(() => {
+                status.textContent = '上传失败';
+                status.style.color = '#e53e3e';
+            });
+        };
+    }
+
+    // 删除按钮事件绑定
+    const deleteBtn = document.querySelector('.pagination .btn-new:nth-child(2)');
+    if (deleteBtn) {
+        deleteBtn.onclick = function() {
+            if (!confirm('确定要删除上传的zip文件吗？')) return;
+            const status = document.getElementById('uploadStatus');
+            status.textContent = '正在删除...';
+            status.style.color = '#888';
+
+            fetch('/sys-delete.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'csrf_token=' + encodeURIComponent(document.querySelector('meta[name="csrf-token"]').content)
+            })
+            .then(res => res.json())
+            .then(data => {
+                status.textContent = data.message;
+                status.style.color = data.success ? '#22b573' : '#e53e3e';
+            })
+            .catch(() => {
+                status.textContent = '删除失败';
+                status.style.color = '#e53e3e';
+            });
+        };
+    }
+
+    // 更新按钮事件绑定
+    const updateBtn = document.getElementById('updateZipBtn');
+    if (updateBtn) {
+        updateBtn.onclick = function() {
+            // 添加确认弹窗，二次确认更新操作
+            showConfirm('确定要更新系统吗？此操作将覆盖现有系统文件（清空日志）', function() {
+                const status = document.getElementById('uploadStatus');
+                status.textContent = '正在更新...';
+                status.style.color = '#888';
+
+                fetch('/sys-update.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'csrf_token=' + encodeURIComponent(document.querySelector('meta[name="csrf-token"]').content)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        status.textContent = '第一步更新成功，正在完成收尾...';
+                        // 第二步，调用 sys-update-over.php
+                        fetch('/sys-update-over.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                            body: 'csrf_token=' + encodeURIComponent(document.querySelector('meta[name="csrf-token"]').content)
+                        })
+                        .then(res2 => res2.json())
+                        .then(data2 => {
+                            if (data2.success) {
+                                status.textContent = '更新完成，正在刷新页面...';
+                                status.style.color = '#22b573';
+                                setTimeout(() => location.reload(), 1200);
+                            } else {
+                                status.textContent = data2.message || '收尾操作失败';
+                                status.style.color = '#e53e3e';
+                            }
+                        })
+                        .catch(() => {
+                            status.textContent = '收尾操作失败';
+                            status.style.color = '#e53e3e';
+                        });
+                    } else {
+                        status.textContent = data.message || '更新失败';
+                        status.style.color = '#e53e3e';
+                    }
+                })
+                .catch(() => {
+                    status.textContent = '更新失败';
+                    status.style.color = '#e53e3e';
+                });
+            });
+        };
+    }
+
+    // 获取版本信息
+    function getVersionInfo() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        fetch('/sys-version.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'csrf_token=' + encodeURIComponent(csrfToken)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const versionBadge = document.getElementById('versionBadge');
+                if (versionBadge) {
+                    versionBadge.textContent = 'v' + data.data.version;
+                    versionBadge.dataset.version = data.data.version;
+                    versionBadge.dataset.changelog = JSON.stringify(data.data.changelog || []);
+                }
+            }
+        })
+        .catch(err => {
+            console.error('获取版本信息失败:', err);
+            const versionBadge = document.getElementById('versionBadge');
+            if (versionBadge) {
+                versionBadge.textContent = '获取失败';
+            }
+        });
+    }
+    
+    // 初始化获取版本
+    getVersionInfo();
+    
+    // 点击版本显示更新内容
+    const versionBadge = document.getElementById('versionBadge');
+    if (versionBadge) {
+        versionBadge.onclick = function() {
+            const version = this.dataset.version || '未知版本';
+            let changelog = [];
+            try {
+                changelog = JSON.parse(this.dataset.changelog || '[]');
+            } catch (e) {
+                console.error('解析更新内容失败', e);
+            }
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.className = 'changelog-modal';
+            modal.innerHTML = `
+                <div class="changelog-content">
+                    <div class="changelog-title">
+                        <h3>版本 ${version} 更新内容</h3>
+                        <span class="close-changelog">×</span>
+                    </div>
+                    <ul class="changelog-list">
+                        ${changelog.length > 0 ? 
+                            changelog.map(item => `<li>${item}</li>`).join('') : 
+                            '<li>无更新内容记录</li>'}
+                    </ul>
+                </div>
+            `;
+            
+            // 添加关闭事件
+            modal.querySelector('.close-changelog').onclick = function() {
+                document.body.removeChild(modal);
+            };
+            
+            // 点击外部也可关闭
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+            
+            document.body.appendChild(modal);
+        };
+    }
     
     // 复制安装命令按钮
     document.getElementById('copyInstallCmdBtn').onclick = function() {
