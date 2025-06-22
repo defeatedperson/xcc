@@ -8,6 +8,28 @@ include 'header.php';
     <link rel="stylesheet" href="./assets/setting.css">
     <div class="main-content">
         <div class="domain-title-container">
+            <h2 class="domain_title2">系统更新</h2>
+            <div class="pagination">
+                <button class="btn-new" id="updateZipBtn">更新</button>
+                <button class="btn-new" id="deleteZipBtn">删除</button>
+                <span class="version-badge" id="versionBadge" title="点击查看更新内容">加载中...</span>
+            </div>
+        </div>
+        <div class="upload-section">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="zipFileInput" name="file" accept=".zip" required>
+                <button type="submit" class="upload-btn">上传</button>
+                <span id="uploadStatus" class="upload-status"></span>
+            </form>
+            <div class="upload-tip">
+                <div>⚠️ <b>建议先完整备份</b>，更新后-备份文件会存放在：<code>站点目录/update/backup</code> 文件夹。前往
+                    <a href="https://github.com/defeatedperson/xcc/releases" target="_blank" class="release-link">发布页</a>
+                    可获取最新版本</div>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="domain-title-container">
             <h2 class="domain_title2">节点安装</h2>
             <div class="pagination">
                 <button class="page-btn" id="startInstallBtn">启动</button>
