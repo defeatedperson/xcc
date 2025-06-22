@@ -57,7 +57,7 @@ window.onload = function() {
     };
 
     // 新增：生成（打包）按钮事件，调用确认弹窗
-    document.querySelector('.pagination .page-btn:nth-child(3)').onclick = function() {
+    document.getElementById('generateBtn').onclick = function() {
         showConfirm('确定要生成并打包题库吗？此操作会覆盖原有题库并生成新安装包。', function() {
             generatePackage(csrfToken);
         });
