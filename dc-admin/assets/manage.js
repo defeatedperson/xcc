@@ -216,8 +216,8 @@ function loadUpdateList(currentPage) {
                 $updateList.append(`
                     <tr data-domain="${item.domain}">
                         <td>${item.domain}</td> 
-                        <td>${item.config_status === "1" ? '已生成' : '未生成'}</td>  
-                        <td>${item.sync_status === "1" ? '已提交' : '未提交'}</td> 
+                        <td>${Number(item.config_status) === 1 ? '已生成' : '未生成'}</td>  
+                        <td>${Number(item.sync_status) === 1 ? '已提交' : '未提交'}</td> 
                         <td>${item.update_time}</td> 
                     </tr>
                 `);
