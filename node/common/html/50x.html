@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50x错误 - 网站暂时不可用</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+            background: #ffffff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            font-size: 18px;
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .lang-switch {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: 1px solid #bdc3c7;
+            background: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 36px;
+            }
+            .message {
+                font-size: 16px;
+            }
+            .error-container {
+                padding: 25px 20px;
+            }
+        }
+
+        /* 多语言内容默认隐藏，通过JS控制显示 */
+        .lang-content {
+            display: none;
+        }
+        .lang-content.active {
+            display: block;
+        }
+
+        /* 新增：驱动信息样式 */
+        .powered-by {
+            margin-top: 20px;
+        }
+        .powered-link {
+            color: #3498db;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .powered-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        /* 移动端适配 */
+        @media (max-width: 480px) {
+            .powered-link {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">50x</div>
+        
+        <!-- 中文内容 -->
+        <div class="lang-content active" data-lang="zh">
+            <p class="message">很抱歉，网站暂时出现了问题。<br>请稍后再试或联系网站管理员获取帮助。</p>
+        </div>
+            
+
+        <!-- 英文内容 -->
+        <div class="lang-content" data-lang="en">
+            <p class="message">We're sorry, the website is temporarily unavailable.<br>Please try again later or contact the website administrator for assistance.</p>
+            
+        </div>
+
+        <!-- 日文内容 -->
+        <div class="lang-content" data-lang="ja">
+            <p class="message">申し訳ありませんが、ウェブサイトに一時的な障害が発生しています。<br>しばらく経ってから再試行するか、ウェブサイト管理者にご連絡ください。</p>
+            
+        </div>
+
+        <div class="lang-switch">
+            <button class="lang-btn" data-target="zh">中文</button>
+            <button class="lang-btn" data-target="en">English</button>
+            <button class="lang-btn" data-target="ja">日本語</button>
+        </div>
+
+        <!-- 新增：驱动信息区域 -->
+        <div class="powered-by">
+            <a href="https://github.com/defeatedperson/xcc" target="_blank" class="powered-link">Powered by XCC</a>
+        </div>
+    </div>
+
+    <script>
+        // 语言切换逻辑
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetLang = btn.dataset.target;
+                document.querySelectorAll('.lang-content').forEach(content => {
+                    content.classList.remove('active');
+                    if (content.dataset.lang === targetLang) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

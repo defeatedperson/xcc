@@ -1,0 +1,202 @@
+[
+    {
+        "title": {
+            "zh": "以下哪个是哺乳动物？",
+            "en": "Which of the following is a mammal?",
+            "ja": "次のうちどれが哺乳類ですか？"
+        },
+        "options": [
+            {
+                "zh": "企鹅",
+                "en": "Penguin",
+                "ja": "ペンギン"
+            },
+            {
+                "zh": "蝙蝠",
+                "en": "Bat",
+                "ja": "コウモリ"
+            },
+            {
+                "zh": "鳄鱼",
+                "en": "Crocodile",
+                "ja": "ワニ"
+            }
+        ],
+        "answer": 2
+    },
+    {
+        "title": {
+            "zh": "中国的首都是？",
+            "en": "What is the capital of China?",
+            "ja": "中国の首都は？"
+        },
+        "options": [
+            {
+                "zh": "上海",
+                "en": "Shanghai",
+                "ja": "上海"
+            },
+            {
+                "zh": "北京",
+                "en": "Beijing",
+                "ja": "北京"
+            },
+            {
+                "zh": "广州",
+                "en": "Guangzhou",
+                "ja": "広州"
+            }
+        ],
+        "answer": 2
+    },
+    {
+        "title": {
+            "zh": "1+2等于？",
+            "en": "What is 1+2 equal to?",
+            "ja": "1+2は？"
+        },
+        "options": [
+            {
+                "zh": "1",
+                "en": "1",
+                "ja": "1"
+            },
+            {
+                "zh": "2",
+                "en": "2",
+                "ja": "2"
+            },
+            {
+                "zh": "3",
+                "en": "3",
+                "ja": "3"
+            }
+        ],
+        "answer": 3
+    },
+    {
+        "title": {
+            "zh": "天空通常是什么颜色？",
+            "en": "What color is the sky usually?",
+            "ja": "空は通常どんな色ですか？"
+        },
+        "options": [
+            {
+                "zh": "蓝色",
+                "en": "Blue",
+                "ja": "青"
+            },
+            {
+                "zh": "红色",
+                "en": "Red",
+                "ja": "赤"
+            },
+            {
+                "zh": "绿色",
+                "en": "Green",
+                "ja": "緑"
+            }
+        ],
+        "answer": 1
+    },
+    {
+        "title": {
+            "zh": "以下哪种动物不会飞？",
+            "en": "Which of the following animals cannot fly?",
+            "ja": "次のうち飛べない動物はどれですか？"
+        },
+        "options": [
+            {
+                "zh": "鸽子",
+                "en": "Pigeon",
+                "ja": "ハト"
+            },
+            {
+                "zh": "燕子",
+                "en": "Swallow",
+                "ja": "ツバメ"
+            },
+            {
+                "zh": "鸡",
+                "en": "Chicken",
+                "ja": "鶏"
+            }
+        ],
+        "answer": 3
+    },
+    {
+        "title": {
+            "zh": "3加2等于几？",
+            "en": "What is 3 plus 2?",
+            "ja": "3足す2は？"
+        },
+        "options": [
+            {
+                "zh": "4",
+                "en": "4",
+                "ja": "4"
+            },
+            {
+                "zh": "5",
+                "en": "5",
+                "ja": "5"
+            },
+            {
+                "zh": "6",
+                "en": "6",
+                "ja": "6"
+            }
+        ],
+        "answer": 2
+    },
+    {
+        "title": {
+            "zh": "一年有几个季节？",
+            "en": "How many seasons are there in a year?",
+            "ja": "一年には何つの季節がありますか？"
+        },
+        "options": [
+            {
+                "zh": "4",
+                "en": "4",
+                "ja": "4"
+            },
+            {
+                "zh": "3",
+                "en": "3",
+                "ja": "3"
+            },
+            {
+                "zh": "5",
+                "en": "5",
+                "ja": "5"
+            }
+        ],
+        "answer": 1
+    },
+    {
+        "title": {
+            "zh": "以下哪个是蔬菜？",
+            "en": "Which of the following is a vegetable?",
+            "ja": "次のうち野菜はどれですか？"
+        },
+        "options": [
+            {
+                "zh": "苹果",
+                "en": "Apple",
+                "ja": "リンゴ"
+            },
+            {
+                "zh": "香蕉",
+                "en": "Banana",
+                "ja": "バナナ"
+            },
+            {
+                "zh": "胡萝卜",
+                "en": "Carrot",
+                "ja": "ニンジン"
+            }
+        ],
+        "answer": 3
+    }
+]

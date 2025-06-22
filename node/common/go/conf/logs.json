@@ -1,0 +1,20 @@
+{
+    "clean_log_paths": [
+        "/usr/local/openresty/nginx/logs/ban.log",
+        "/usr/local/openresty/nginx/logs/request.log",
+        "/usr/local/openresty/nginx/logs/access.log",
+        "/usr/local/openresty/nginx/logs/error.log"
+    ],
+    "submit_log_paths": [
+        "/usr/local/openresty/nginx/logs/ban.log",
+        "/usr/local/openresty/nginx/logs/request.log" 
+    ],
+    "self_log_paths": [
+    {
+        "go": "/xcc/go/logs/app.log"
+    },
+    {
+        "error": "/usr/local/openresty/nginx/logs/error.log"
+    }
+   ]
+}

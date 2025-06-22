@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>人机验证 | Human Verification | 人間確認</title>
+    <style>
+        :root {
+            --primary-color: #f0f4f8;
+            --secondary-color: #1a73e8;
+            --text-color: #202124;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+        .container {
+            max-width: 720px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h2 {
+            color: var(--text-color);
+            font-size: 24px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 12px;
+        }
+        .question {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .question small {
+            display: block;
+            font-size: 14px;
+            color: #5f6368;
+            margin-top: 8px;
+        }
+        .option {
+            margin: 12px 0;
+            padding: 16px 20px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .option:hover {
+            background-color: #f8f9fa;
+            border-color: var(--secondary-color);
+        }
+        .option.disabled {
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+            opacity: 0.7;
+            border-color: #dadce0;
+        }
+        .option span {
+            flex: 1;
+        }
+        .option small {
+            margin-left: 12px;
+            color: #5f6368;
+            font-size: 14px;
+        }
+        #message {
+            color: #d93025;
+            margin-top: 16px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        #refreshBtn {
+            margin-top: 16px;
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+            display: none; /* 初始隐藏 */
+        }
+        #refreshBtn:hover {
+            background-color: #1557b0;
+        }
+
+        /* 新增：驱动信息样式 */
+        .powered-by {
+            margin-top: 20px;
+        }
+        .powered-link {
+            color: #3498db;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .powered-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        /* 移动端适配 */
+        @media (max-width: 480px) {
+            .powered-link {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>请完成人机验证 | Please complete human verification | 人間確認を完了してください</h2>
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <p id="message"></p>
+        <button id="refreshBtn">
+            <!-- 多语言按钮文本 -->
+            <span class="zh">刷新题目</span>
+            <span class="en" style="display: none;">Refresh Question</span>
+            <span class="ja" style="display: none;">問題を再読み込み</span>
+        </button>
+        <!-- 新增：驱动信息区域 -->
+        <div class="powered-by">
+            <a href="https://github.com/defeatedperson/xcc" target="_blank" class="powered-link">Powered by XCC</a>
+        </div>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userIp = urlParams.get('ip');
+        let currentOptions = []; // 存储当前选项元素
+
+        function loadQuestion() {
+            // 添加时间戳避免缓存
+            fetch(`/lua/global.lua?action=get_question&ip=${userIp}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 新增：处理后端返回的错误信息（关键修改）
+                    if (data.error) {
+                        if (data.error === "IP已验证") {
+                            window.location.href = '/';  // 重定向到首页（根据实际首页路径调整）
+                           return;
+                        }
+                        document.getElementById('message').textContent = data.error;
+                        return;
+                    }
+                    if (!data) {
+                        document.getElementById('message').textContent = '验证会话已过期 | Verification session expired | 検証セッションが期限切れです';
+                        return;
+                    }
+                    
+                    // 清空错误信息和隐藏刷新按钮
+                    document.getElementById('message').textContent = '';
+                    document.getElementById('refreshBtn').style.display = 'none';
+                    
+                    // 渲染多语言题目
+                    const questionEl = document.getElementById('question');
+                    questionEl.innerHTML = `
+                        ${data.title.zh}
+                        <small>${data.title.en} | ${data.title.ja}</small>
+                    `;
+                    
+                    // 渲染多语言选项（启用状态）
+                    const optionsDiv = document.getElementById('options');
+                    optionsDiv.innerHTML = data.options.map((opt, index) => `
+                        <div class="option" data-answer="${index + 1}">
+                            <span>${index + 1}. ${opt.zh}</span>
+                            <small>${opt.en} | ${opt.ja}</small>
+                        </div>
+                    `).join('');
+
+                    // 绑定选项点击事件（仅启用状态可点击）
+                    currentOptions = document.querySelectorAll('.option');
+                    currentOptions.forEach(option => {
+                        option.classList.remove('disabled'); // 确保启用
+                        option.addEventListener('click', handleOptionClick);
+                    });
+
+                    // 根据浏览器语言显示对应按钮文本（示例：自动检测语言）
+                    const lang = navigator.language || navigator.userLanguage;
+                    const btnSpans = document.querySelectorAll('#refreshBtn span');
+                    btnSpans.forEach(span => span.style.display = 'none');
+                    if (lang.startsWith('ja')) {
+                        document.querySelector('.ja').style.display = 'inline';
+                    } else if (lang.startsWith('en')) {
+                        document.querySelector('.en').style.display = 'inline';
+                    } else {
+                        document.querySelector('.zh').style.display = 'inline';
+                    }
+                });
+        }
+
+        function handleOptionClick() {
+            const userAnswer = this.dataset.answer;
+            // 禁用所有选项（防止重复提交）
+            currentOptions.forEach(opt => {
+                opt.classList.add('disabled');
+                opt.removeEventListener('click', handleOptionClick);
+            });
+            verifyAnswer(userAnswer);
+        }
+
+        function verifyAnswer(userAnswer) {
+        fetch(`/lua/global.lua?action=verify&ip=${userIp}&answer=${userAnswer}`)
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    window.location.href = result.url; // 从服务端获取原URL
+                } else {
+                    // 新增：兼容后端返回字符串或对象的情况（关键修复）
+                    let message;
+                    if (typeof result.msg === 'string') {
+                        // 后端返回字符串时，默认作为中文提示，英文/日文使用默认值
+                        message = {
+                            zh: result.msg,
+                            en: 'Verification failed. Please refresh the question and try again',
+                            ja: '検証に失敗しました。問題を再読み込みして再試行してください'
+                        };
+                    } else {
+                        // 后端返回对象时，使用提供的多语言字段（无则用默认值）
+                        message = result.msg || {
+                            zh: '验证失败，请刷新题目重试',
+                            en: 'Verification failed. Please refresh the question and try again',
+                            ja: '検証に失敗しました。問題を再読み込みして再試行してください'
+                        };
+                    }
+                    document.getElementById('message').innerHTML = `
+                        ${message.zh} | ${message.en} | ${message.ja}
+                    `;
+                    document.getElementById('refreshBtn').style.display = 'block'; // 显示刷新按钮
+                }
+            });
+    }
+
+        // 刷新按钮点击事件
+        document.getElementById('refreshBtn').addEventListener('click', loadQuestion);
+
+        // 页面加载时获取题目
+        loadQuestion();
+    </script>
+</body>
+</html>
