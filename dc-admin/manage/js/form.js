@@ -12,7 +12,7 @@ $(function() {
         $('.function-radio').prop('disabled', false);
     }
 
-    // 编辑模式时加载域名数据（关键修复：添加CSRF令牌）
+    // 编辑模式时加载域名数据
     if (formType === 'edit' && currentDomain) {
         $.post('/data/read.php', { 
             action: 'get_domain_detail', 
@@ -23,10 +23,10 @@ $(function() {
                 $('#domain').val(res.data.domain).prop('readonly', true);
                 $('#originUrl').val(res.data.origin_url);
                 if (res.data.ssl_enabled === "1") {
-                    $('#ssl').prop('checked', true).trigger('change');
+                    $('#ssl').prop('checked', true); // 移除.trigger('change')
                 }
             } else {
-               showAlert('error','加载域名信息失败：' + res.message);
+            showAlert('error','加载域名信息失败：' + res.message);
             }
         }, 'json');
     }
