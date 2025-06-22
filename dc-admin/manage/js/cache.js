@@ -13,7 +13,7 @@ $(function() {
         }).done(res => {
             if (res.success && res.data) {
                 // 渲染启用状态（仅保留正确的布尔值判断）
-                $('#cache-enabled').prop('checked', res.data.enabled === '1');
+                $('#cache-enabled').prop('checked', parseInt(res.data.enabled) === 1);
                 // 渲染缓存时间
                 $('#cache-time1').val(res.data.cache_time || '1h');
                 // 渲染文件后缀（按|分割成标签）
