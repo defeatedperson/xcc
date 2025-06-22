@@ -35,7 +35,7 @@ XCC（星尘CC防御）是一款专注于应对DDoS/CC攻击的开源防护软�
 - 被控需要独立占用80/443/8080端口
 
 ### 安装步骤
-下载最新版本：[发布页面](https://github.com/defeatedperson/xcc/releases/tag/v0.0.2 "发布页面")
+下载最新版本：[发布页面](https://github.com/defeatedperson/xcc/releases "发布页面")
 
 ## 📖 使用文档
 完善中，稍安勿躁
