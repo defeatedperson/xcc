@@ -12,7 +12,7 @@ include 'header.php';
             <div class="pagination">
                 <button class="page-btn" id="startInstallBtn">启动</button>
                 <button class="page-btn" id="closeInstallBtn">关闭</button>
-                <button class="page-btn">生成</button>
+                <button class="page-btn" id="generateBtn">生成</button>
             </div>
         </div>
         <div class="install-mode-panel">
