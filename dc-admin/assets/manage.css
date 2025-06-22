@@ -23,15 +23,6 @@
      background-color: #f8f8f8;
      font-weight: 600;
  }
-  .domain-table button {
-      padding: 6px 12px;
-      border: none;
-      gap: 5px;
-      border-radius: 4px;
-      cursor: pointer;
-     background-color: #ff4444;
-      color: white;
-}
  
 
 /* 新增：加载动画样式 */
@@ -52,7 +43,7 @@
    border: 2px solid #e0e0e0;
    border-top-color: #2196F3;
    border-radius: 50%;
-   animation: loading-spin 1s linear infinite;
+   animation: loading-spin 1 linear infinite;
    margin-right: 10px;
 }
 
@@ -70,5 +61,28 @@
     color: white;
     border: 1.5px solid #b3d8fd;
     box-shadow: 0 2px 8px rgba(33,150,243,0.05);
-    transition: background 0.3s, color 0.3s, border 0.3s;
+    transition: background 0.3, color 0.3, border 0.3;
+}
+
+/* 域名表格按钮容器样式 - 确保水平排列 */
+.domain-table td:last-child {
+    min-width: 180px;    /* 确保足够宽度容纳两个按钮 */
+    white-space: nowrap; /* 防止内容换行 */
+}
+
+/* 域名表格按钮样式 - 确保水平间距 */
+.domain-table button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #ff4444;
+    color: white;
+    margin-right: 8px;   /* 按钮之间的间距 */
+    display: inline-block; /* 确保水平排列 */
+}
+
+/* 清理缓存按钮使用不同颜色区分 */
+.domain-table .clear-cache-btn {
+    background-color: #2196F3;
 }
