@@ -317,17 +317,6 @@ try {
         DELETE FROM request_logs 
         WHERE create_time < datetime('now', '-{$retainDays} days')
         ");
-
-        // 新增：成功响应（关键修复）
-        echo json_encode([
-        'success' => true,
-        'message' => '日志处理成功',
-        'processed_records' => [
-            'request' => count($requestRecords),
-            'ban' => count($bannedIpRecords)
-        ]
-    ]);
-
 // 错误处理（关键修改：补充日志记录）
 } catch (PDOException $e) {
     // 记录数据库错误到日志文件（参数3表示写入文件，\n确保换行）
