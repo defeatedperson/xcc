@@ -128,6 +128,7 @@ include 'header.php'; // 集成中心验证文件（核心安全控制）
         </div>
         <!-- 新增表格容器 -->
         <div class="table-container">
+            <div class="notice3">Tips:恶意IP一般封禁10分钟，最长会触发30分钟（连续恶意攻击验证页面）</div>
             <!-- 封禁列表表格（添加tbody唯一ID） -->
             <table class="block-list">
                 <thead>
@@ -141,7 +142,6 @@ include 'header.php'; // 集成中心验证文件（核心安全控制）
                 </tbody>
             </table>
         </div>
-        <div class="notice3">Tips:恶意IP一般封禁10分钟，最长会触发30分钟（连续恶意攻击验证页面）</div>
     </div>
     <!-- 提示模块 -->
     <div class="main-content">
