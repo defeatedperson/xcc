@@ -97,6 +97,7 @@ include 'header.php'; // 集成中心验证文件（核心安全控制）
                     <button class="btn btn-stop">停止</button>
                     <button class="btn btn-restart">重启</button>
                 </div>
+                <div class="notice3">Tips:网络错误一般是nginx未启动，点一下启动就好了。</div>
                 <hr class="operation-divider">  <!-- 新增分割线 -->
                 <div class="log-container">
                     <div class="log-buttons">
@@ -140,6 +141,7 @@ include 'header.php'; // 集成中心验证文件（核心安全控制）
                 </tbody>
             </table>
         </div>
+        <div class="notice3">Tips:恶意IP一般封禁10分钟，最长会触发30分钟（连续恶意攻击验证页面）</div>
     </div>
     <!-- 提示模块 -->
     <div class="main-content">
