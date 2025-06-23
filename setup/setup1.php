@@ -188,7 +188,7 @@ if ($allPass) {
 
         <!-- 伪静态规则展示区域 -->
         <div class="rewrite-block">
-            <div class="rewrite-title">Nginx 伪静态规则（禁止访问 /auth/data 下 json 文件）</div>
+            <div class="rewrite-title">Nginx 伪静态规则</div>
             <div class="rewrite-code" id="rewriteCode">
 location ~* \.(db|json|conf|key|crt|log|zip)$ {
         deny all;
