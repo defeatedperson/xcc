@@ -39,16 +39,26 @@ if ($canWrite && $canRead) {
 @unlink($rwTestFile);
 
 
-// 检查 HTTPS
-$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+// 改进的 HTTPS 检测，添加对常见反向代理头的支持
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+        || $_SERVER['SERVER_PORT'] == 443
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+        || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on')
+        || (isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false);
+
 $checks['HTTPS 启用'] = $isHttps ?
     ['ok' => true, 'msg' => "已启用 HTTPS"] :
-    ['ok' => false, 'msg' => "未启用 HTTPS"];
+    ['ok' => false, 'msg' => "未启用 HTTPS (如使用反向代理，请确保正确转发HTTPS头)"];
 
+// 先定义测试文件路径
+$testJsonName = 'test_' . time() . '.json';
+$testJsonPath = $_SERVER['DOCUMENT_ROOT'] . '/auth/data/' . $testJsonName;
+$testJsonUrl = '/auth/data/' . $testJsonName;
 
-// 检查伪静态规则（json文件访问是否403）
-$testJsonPath = $_SERVER['DOCUMENT_ROOT'] . '/auth/data/test.json';
-$testJsonUrl = '/auth/data/test.json';
+// 改进的伪静态检测，获取当前实际访问URL
+$scheme = $isHttps ? 'https' : 'http';
+$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'];
+$testUrl = "{$scheme}://{$host}{$testJsonUrl}";
 
 // 自动创建测试文件
 file_put_contents($testJsonPath, '{"test":1}');
@@ -57,7 +67,7 @@ file_put_contents($testJsonPath, '{"test":1}');
 $httpCode = 0;
 if (function_exists('curl_init')) {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $testJsonUrl);
+    curl_setopt($ch, CURLOPT_URL, $testUrl);
     curl_setopt($ch, CURLOPT_NOBODY, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -132,12 +142,12 @@ if ($allPass) {
         .env-check-list li { margin-bottom: 10px; font-size: 15px; }
         .ok { color: #22b573; }
         .fail { color: #e53e3e; }
-        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2s; }
+        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2; }
         .setup-btn:disabled { background: #b3b3b3; cursor: not-allowed; }
         .rewrite-block { background: #f4f6fa; border: 1px solid #dbeafe; border-radius: 6px; padding: 16px 12px; margin: 24px 0 0 0; }
         .rewrite-title { font-size: 15px; color: #2563eb; margin-bottom: 8px; font-weight: bold; }
         .rewrite-code { background: #222; color: #fff; font-size: 13px; border-radius: 4px; padding: 10px 12px; margin-bottom: 8px; white-space: pre; }
-        .copy-btn { background: #2563eb; color: #fff; border: none; border-radius: 4px; padding: 4px 14px; font-size: 14px; margin-left: 8px; cursor: pointer; transition: background 0.2s; }
+        .copy-btn { background: #2563eb; color: #fff; border: none; border-radius: 4px; padding: 4px 14px; font-size: 14px; margin-left: 8px; cursor: pointer; transition: background 0.2; }
         .copy-btn:hover { background: #1746a2; }
         .copy-tip { color: #22b573; font-size: 13px; margin-left: 8px; display: none; }
     </style>
