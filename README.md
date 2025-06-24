@@ -35,7 +35,35 @@ XCC（星尘CC防御）是一款专注于应对DDoS/CC攻击的开源防护软�
 - 被控需要独立占用80/443/8080端口
 
 ### 安装步骤
-下载最新版本：[发布页面](https://github.com/defeatedperson/xcc/releases "发布页面")
+#### 手动部署
+1. 下载最新版本：[发布页面](https://github.com/defeatedperson/xcc/releases "发布页面")
+2. 之后，和安装wordpress一样简单操作即可。
+nginx伪静态规则在安装的时候会显示
+
+#### 一键部署
+[![通过雨云一键部署](https://rainyun-apps.cn-nb1.rains3.com/materials/deploy-on-rainyun-cn.svg)](https://app.rainyun.com/apps/rca/store/6596/dp712_)
+
+#### docker部署
+1. 创建文件夹`sudo mkdir -p /opt/xcc-app`
+2. 创建文件`sudo touch /opt/xcc-app/site.json`
+3. 拉取镜像`docker pull defeatedperson/xcc-app:latest`
+4. 运行镜像
+    docker run -d \
+      -p 8080:80 \
+      --name xcc-app-instance \
+      --restart always \
+      -v xcc_auth_data:/var/www/html/auth/data \
+      -v xcc_api_db:/var/www/html/api/db \
+      -v xcc_data_db:/var/www/html/data/db \
+      -v /opt/xcc-app/site.json:/var/www/html/node/site.json \
+      defeatedperson/xcc-app:latest
+
+------------
+
+
+4.创建反向代理（8080端口），需启用https。
+（伪静态规则已经配置，故这里无需配置）
+
 
 ## 📖 使用文档
 完善中，稍安勿躁
@@ -48,6 +76,10 @@ XCC（星尘CC防御）是一款专注于应对DDoS/CC攻击的开源防护软�
 
 ## 📜 许可证
 本项目采用[Apache 2.0许可证](https://github.com/defeatedperson/xcc/blob/v0.0.2/LICENSE)，允许商业使用、修改和分发，但需保留原版权声明。
+
+## 💬 联系我们
+- 官方网站https://xcdream.com/
+- 商务合作：发送邮件至dp712@qq.com
 
 ## 💬 联系我们
 - 官方网站https://xcdream.com/
