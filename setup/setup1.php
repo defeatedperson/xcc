@@ -3,7 +3,8 @@
 $authDataDir = $_SERVER['DOCUMENT_ROOT'] . '/auth/data';
 if (is_dir($authDataDir)) {
     foreach (glob($authDataDir . '/*.json') as $jsonFile) {
-        if (is_file($jsonFile)) {
+        // 排除我们自己创建的临时测试文件
+        if (is_file($jsonFile) && strpos(basename($jsonFile), 'test_') !== 0) {
             header("Location: /");
             exit;
         }
@@ -35,11 +36,10 @@ if ($canWrite && $canRead) {
 } else {
     $checks['目录读写权限'] = ['ok' => false, 'msg' => "PHP 无法读写 /auth/data 目录，请检查权限"];
 }
-// 删除测试文件
 @unlink($rwTestFile);
 
 
-// 改进的 HTTPS 检测，添加对常见反向代理头的支持
+// 改进的 HTTPS 检测
 $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
         || $_SERVER['SERVER_PORT'] == 443
         || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
@@ -49,54 +49,6 @@ $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
 $checks['HTTPS 启用'] = $isHttps ?
     ['ok' => true, 'msg' => "已启用 HTTPS"] :
     ['ok' => false, 'msg' => "未启用 HTTPS (如使用反向代理，请确保正确转发HTTPS头)"];
-
-// 先定义测试文件路径
-$testJsonName = 'test_' . time() . '.json';
-$testJsonPath = $_SERVER['DOCUMENT_ROOT'] . '/auth/data/' . $testJsonName;
-$testJsonUrl = '/auth/data/' . $testJsonName;
-
-// 改进的伪静态检测，获取当前实际访问URL
-$scheme = $isHttps ? 'https' : 'http';
-$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'];
-$testUrl = "{$scheme}://{$host}{$testJsonUrl}";
-
-// 自动创建测试文件
-file_put_contents($testJsonPath, '{"test":1}');
-
-// 访问 test.json 检查返回状态码
-$httpCode = 0;
-if (function_exists('curl_init')) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $testUrl);
-    curl_setopt($ch, CURLOPT_NOBODY, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-} else {
-    // fallback: 用 get_headers
-    $headers = @get_headers($testJsonUrl, 1);
-    if ($headers && isset($headers[0])) {
-        if (preg_match('/\s(\d{3})\s/', $headers[0], $m)) {
-            $httpCode = intval($m[1]);
-        }
-    }
-}
-
-// 检查结果
-if ($httpCode === 403) {
-    $checks['伪静态规则'] = ['ok' => true, 'msg' => "已生效（访问json文件返回403）"];
-} elseif ($httpCode === 404) {
-    $checks['伪静态规则'] = ['ok' => false, 'msg' => "检测文件不存在，请检查 /auth/data/ 目录权限"];
-} else {
-    $checks['伪静态规则'] = ['ok' => false, 'msg' => "未生效（访问json文件返回{$httpCode}），请检查nginx配置"];
-}
-
-// 删除测试文件
-@unlink($testJsonPath);
 
 // 检查 SQLite 可用
 try {
@@ -113,13 +65,30 @@ try {
     $checks['SQLite 数据库'] = ['ok' => false, 'msg' => "SQLite 不可用：" . $e->getMessage()];
 }
 
-// 是否全部通过
+// --- 伪静态检测准备 ---
+$rewriteCheckData = ['url' => '', 'error' => ''];
+$testJsonName = 'test_' . time() . '.json';
+$testJsonPath = $authDataDir . '/' . $testJsonName;
+
+// PHP 只负责创建文件，JS 负责检测
+if (@file_put_contents($testJsonPath, '{"test":1}') === false) {
+    // 如果连文件都创建失败，直接标记为权限问题
+    $rewriteCheckData['error'] = '检测文件创建失败，请检查 /auth/data/ 目录权限';
+} else {
+    // 将测试文件的相对路径传递给 JS
+    $rewriteCheckData['url'] = '/auth/data/' . $testJsonName;
+}
+
+// 是否全部通过 (初始状态，不包括JS检测项)
 $allPass = true;
 foreach ($checks as $item) {
     if (!$item['ok']) {
         $allPass = false;
         break;
     }
+}
+if (!empty($rewriteCheckData['error'])) {
+    $allPass = false;
 }
 
 // 步骤1通过后，生成 set1.txt 文件作为步骤完成标记
@@ -142,26 +111,16 @@ if ($allPass) {
         .env-check-list li { margin-bottom: 10px; font-size: 15px; }
         .ok { color: #22b573; }
         .fail { color: #e53e3e; }
-        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2; }
+        .pending { color: #f59e0b; } /* 新增：检测中状态 */
+        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2s; }
         .setup-btn:disabled { background: #b3b3b3; cursor: not-allowed; }
         .rewrite-block { background: #f4f6fa; border: 1px solid #dbeafe; border-radius: 6px; padding: 16px 12px; margin: 24px 0 0 0; }
         .rewrite-title { font-size: 15px; color: #2563eb; margin-bottom: 8px; font-weight: bold; }
         .rewrite-code { background: #222; color: #fff; font-size: 13px; border-radius: 4px; padding: 10px 12px; margin-bottom: 8px; white-space: pre; }
-        .copy-btn { background: #2563eb; color: #fff; border: none; border-radius: 4px; padding: 4px 14px; font-size: 14px; margin-left: 8px; cursor: pointer; transition: background 0.2; }
+        .copy-btn { background: #2563eb; color: #fff; border: none; border-radius: 4px; padding: 4px 14px; font-size: 14px; margin-left: 8px; cursor: pointer; transition: background 0.2s; }
         .copy-btn:hover { background: #1746a2; }
         .copy-tip { color: #22b573; font-size: 13px; margin-left: 8px; display: none; }
     </style>
-    <script>
-    function copyRewrite() {
-        const code = document.getElementById('rewriteCode').textContent;
-        navigator.clipboard.writeText(code).then(function() {
-            document.getElementById('copyTip').style.display = 'inline';
-            setTimeout(function() {
-                document.getElementById('copyTip').style.display = 'none';
-            }, 1500);
-        });
-    }
-    </script>
 </head>
 <body class="background-anim-container">
     <div class="setup-container">
@@ -169,22 +128,25 @@ if ($allPass) {
         <ul class="env-check-list">
             <?php foreach ($checks as $name => $item): ?>
                 <li>
-                    <?php if ($item['ok']): ?>
-                        <span class="ok">✔</span>
-                    <?php else: ?>
-                        <span class="fail">✖</span>
-                    <?php endif; ?>
+                    <span class="<?php echo $item['ok'] ? 'ok' : 'fail'; ?>">
+                        <?php echo $item['ok'] ? '✔' : '✖'; ?>
+                    </span>
                     <b><?php echo htmlspecialchars($name); ?>：</b>
                     <?php echo htmlspecialchars($item['msg']); ?>
                 </li>
             <?php endforeach; ?>
+            
+            <!-- 伪静态检测占位符 -->
+            <li id="rewrite-check-li">
+                <span id="rewrite-check-icon" class="pending">...</span>
+                <b>伪静态规则：</b>
+                <span id="rewrite-check-msg">正在检测...</span>
+            </li>
         </ul>
         <form action="setup2.php" method="get">
-            <button type="submit" class="setup-btn" <?php if(!$allPass) echo 'disabled'; ?>>下一步</button>
+            <button id="next-btn" type="submit" class="setup-btn" disabled>下一步</button>
         </form>
-        <?php if(!$allPass): ?>
-            <div style="color:#e53e3e;margin-top:16px;">请修复所有环境问题后再继续。</div>
-        <?php endif; ?>
+        <div id="error-msg" style="color:#e53e3e;margin-top:16px;display:none;">请修复所有环境问题后再继续。</div>
 
         <!-- 伪静态规则展示区域 -->
         <div class="rewrite-block">
@@ -204,5 +166,43 @@ location ~* /(update-worker|clear-cache-worker)\.php$ {
             <span class="copy-tip" id="copyTip">已复制！</span>
         </div>
     </div>
-</body>
-</html>
+
+    <script>
+    function copyRewrite() {
+        const code = document.getElementById('rewriteCode').textContent;
+        navigator.clipboard.writeText(code).then(function() {
+            document.getElementById('copyTip').style.display = 'inline';
+            setTimeout(function() {
+                document.getElementById('copyTip').style.display = 'none';
+            }, 1500);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const rewriteCheckData = <?php echo json_encode($rewriteCheckData); ?>;
+        const iconEl = document.getElementById('rewrite-check-icon');
+        const msgEl = document.getElementById('rewrite-check-msg');
+
+        function updateNextButtonState() {
+            const hasFailures = document.querySelector('.env-check-list .fail, .env-check-list .pending');
+            document.getElementById('next-btn').disabled = !!hasFailures;
+            document.getElementById('error-msg').style.display = hasFailures ? 'block' : 'none';
+        }
+
+        async function checkRewriteRule() {
+            if (rewriteCheckData.error) {
+                iconEl.textContent = '✖';
+                iconEl.className = 'fail';
+                msgEl.textContent = rewriteCheckData.error;
+                updateNextButtonState();
+                return;
+            }
+
+            const testUrl = window.location.origin + rewriteCheckData.url;
+            
+            try {
+                // 使用 HEAD 请求，我们只需要状态码，不需要下载文件内容，更高效
+                const response = await fetch(testUrl, { method: 'HEAD', cache: 'no-cache' });
+
+                if (response.status === 403) {
+       
