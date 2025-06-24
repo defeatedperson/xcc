@@ -1,9 +1,18 @@
 <?php
+// 清理第一步留下的所有临时测试文件
+$authDataDir = $_SERVER['DOCUMENT_ROOT'] . '/auth/data';
+if (is_dir($authDataDir)) {
+    foreach (glob($authDataDir . '/test_*.json') as $testFile) {
+        @unlink($testFile);
+    }
+}
+
 // 检查 /auth/data 目录下是否存在 json 文件，若存在则跳转到网站根目录并终止执行
 $authDataDir = $_SERVER['DOCUMENT_ROOT'] . '/auth/data';
 if (is_dir($authDataDir)) {
     foreach (glob($authDataDir . '/*.json') as $jsonFile) {
-        if (is_file($jsonFile)) {
+        // 和 setup1.php 保持一致，只检查非测试的json文件
+        if (is_file($jsonFile) && strpos(basename($jsonFile), 'test_') !== 0) {
             header("Location: /");
             exit;
         }
@@ -80,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .setup-title { font-size: 20px; color: #2563eb; margin-bottom: 18px; }
         .setup-form label { display: block; margin: 18px 0 6px 0; font-weight: bold; }
         .setup-form input { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 15px; }
-        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2s; margin-top: 22px;}
+        .setup-btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; font-size: 16px; padding: 10px 38px; cursor: pointer; transition: background 0.2; margin-top: 22px;}
         .setup-btn:hover { background: #1d4fd7; }
         .err-msg { color: #e53e3e; margin-top: 16px; }
     </style>
