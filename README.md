@@ -80,7 +80,3 @@ nginx伪静态规则在安装的时候会显示
 ## 💬 联系我们
 - 官方网站https://xcdream.com/
 - 商务合作：发送邮件至dp712@qq.com
-
-## 💬 联系我们
-- 官方网站https://xcdream.com/
-- 商务合作：发送邮件至dp712@qq.com
