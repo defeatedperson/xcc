@@ -205,7 +205,7 @@ function loadUpdateList(currentPage) {
             }
 
             // 检查是否存在未提交同步的域名
-            const hasUnsubmitted = res.data.some(item => item.sync_status === "0");
+            const hasUnsubmitted = res.data.some(item => Number(item.sync_status) === 0);
             if (hasUnsubmitted) {
                 $('#syncStatusTip').text('⚠未提交');
             } else {
