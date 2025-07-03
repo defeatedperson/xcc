@@ -2,68 +2,68 @@
 // 包含公共认证文件（校验登录状态和权限）
 define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . '/auth/');
 include ROOT_PATH . 'auth.php';
-// 配置生成中心模块（整合conf-ngx.php/conf-l.php/conf-com.php功能）
+// 配置生成中心模块（整合conf-ngx.php/conf-ssl.php/conf-com.php功能）
 // 核心功能：安全验证→目录检查→配置生成流程控制
 
 // ------------------------- 新增：日志配置 -------------------------
-define('LOG_DIR', __DIR__ . '/log');  // Linux系统实际路径为 /var/www/cdn/php/data/log
+define('LOG_DIR', __DIR__ . '/logs');  // Linux系统实际路径为 /var/www/cdn/php/data/logs
 // 修改后（固定名称）
 define('LOG_FILE', LOG_DIR . '/conf-center.log');  // 固定日志文件名为conf-center.log
 
-// ------------------------- 步骤1：安全验证（参考l-cert.php） -------------------------
+// ------------------------- 步骤1：安全验证（参考ssl-certs.php） -------------------------
 // 强制仅允许POST方法
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_repone_code(405);
-    echo jon_encode(['ucce' => fale, 'meage' => '仅允许POST方法']);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => '仅允许POST方法']);
     exit;
 }
 
-// CSRF令牌校验（与l-cert.php保持一致）
-$receivedCrfToken = $_POST['crf_token'] ?? '';
-if ($receivedCrfToken !== ($_SESSION['crf_token'] ?? '')) {
-    http_repone_code(403);
-    echo jon_encode(['ucce' => fale, 'meage' => 'CSRF验证失败']);
+// CSRF令牌校验（与ssl-certs.php保持一致）
+$receivedCsrfToken = $_POST['csrf_token'] ?? '';
+if ($receivedCsrfToken !== ($_SESSION['csrf_token'] ?? '')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF验证失败']);
     exit;
 }
 
 // 设置响应头
-header('Content-Type: application/jon; charet=utf-8');
+header('Content-Type: application/json; charset=utf-8');
 
 // ------------------------- 步骤2：初始化参数与数据库连接 -------------------------
 try {
     // 新增：每次执行模块时清空日志文件
-    if (file_exit(LOG_FILE)) {
-        file_put_content(LOG_FILE, '', LOCK_EX);  // 清空文件内容（LOCK_EX防止并发写入冲突）
+    if (file_exists(LOG_FILE)) {
+        file_put_contents(LOG_FILE, '', LOCK_EX);  // 清空文件内容（LOCK_EX防止并发写入冲突）
         chmod(LOG_FILE, 0600);  // 保持文件权限（所有者读写）
     }
     
     // 校验并获取关键参数（domain）
-    if (!iet($_POST['domain']) || empty($_POST['domain'])) {
+    if (!isset($_POST['domain']) || empty($_POST['domain'])) {
         throw new Exception("缺少必要参数：domain", 400);
     }
     $domain = trim($_POST['domain']);
 
     // 连接SQLite数据库（与原模块共用同一路径）
     $dbDir = __DIR__ . '/db';
-    $dbFile = $dbDir . '/ite_config.db';
-    $pdo = new PDO("qlite:{$dbFile}");
-    $pdo->etAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbFile = $dbDir . '/site_config.db';
+    $pdo = new PDO("sqlite:{$dbFile}");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // ------------------------- 步骤3：检查并创建输出目录 -------------------------
     // 定义所有需要的输出目录（整合原三个模块的路径需求）
-    $requiredDir = [
+    $requiredDirs = [
         __DIR__ . '/config/conf',    // ngx配置输出目录（来自conf-ngx.php）
-        __DIR__ . '/config/cert',   // SSL证书输出目录（来自conf-l.php）
+        __DIR__ . '/config/certs',   // SSL证书输出目录（来自conf-ssl.php）
         __DIR__ . '/config/lua',     // CC防护JSON输出目录（来自conf-com.php）
-        __DIR__ . '/config/lit',     // 黑白名单输出目录（来自conf-com.php）
+        __DIR__ . '/config/list',     // 黑白名单输出目录（来自conf-com.php）
         __DIR__ . '/config/cache',     // 缓存配置
-        __DIR__ . '/config/cachelit'     // 缓存配置导入目录
+        __DIR__ . '/config/cachelist'     // 缓存配置导入目录
     ];
 
     // 检查并创建目录（权限与原模块保持一致）
-    foreach ($requiredDir a $dir) {
+    foreach ($requiredDirs as $dir) {
         writeLog("开始检查目录：{$dir}", $domain);  // 新增日志
-        if (!i_dir($dir)) {
+        if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 writeLog("目录创建失败：{$dir}", $domain);  // 新增日志
                 throw new Exception("目录创建失败：{$dir}", 500);
@@ -335,9 +335,6 @@ function generateSslCerts($sharedParams) {
     }
 }
 
- //1.1生成未开启https的配置文件
- //1.2生成开启https+未自动跳转https的配置文件
- //1.3生成开启https+自动跳转https的配置文件
  // ------------------------- 新增判断函数（选择模板生成策略） -------------------------
 /**
  * 判断并调用对应的模板生成函数（核心逻辑）
@@ -349,12 +346,8 @@ function determineTemplateGenerator($sharedParams) {
     $pdo = $sharedParams['pdo'];
 
     try {
-        // 步骤1：从site_config表获取SSL启用状态（来自read.php的数据表）
-        $siteConfigStmt = $pdo->prepare("
-            SELECT ssl_enabled 
-            FROM site_config 
-            WHERE domain = :domain
-        ");
+        // 步骤1：从site_config表获取SSL启用状态
+        $siteConfigStmt = $pdo->prepare("SELECT ssl_enabled, origin_url FROM site_config WHERE domain = :domain");
         $siteConfigStmt->bindParam(':domain', $domain, PDO::PARAM_STR);
         $siteConfigStmt->execute();
         $siteConfig = $siteConfigStmt->fetch(PDO::FETCH_ASSOC);
@@ -363,18 +356,57 @@ function determineTemplateGenerator($sharedParams) {
             throw new Exception("未找到域名 {$domain} 的站点基础配置");
         }
 
-        // 情况1：未开启SSL（调用生成函数1）
+        // 步骤2：尝试读取more_settings表（自定义回源和HSTS）
+        $origin_enabled = 0;
+        $origin_domain = '';
+        $hsts_enabled = 0;
+        try {
+            $stmt = $pdo->prepare("SELECT origin_domain, origin_enabled, hsts_enabled FROM more_settings WHERE domain = :domain");
+            $stmt->bindParam(':domain', $domain, PDO::PARAM_STR);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $origin_enabled = intval($row['origin_enabled']);
+                $origin_domain = trim($row['origin_domain']);
+                $hsts_enabled = intval($row['hsts_enabled']);
+            }
+        } catch (\Exception $e) {
+            // 表不存在或数据库异常，全部按未开启处理
+            $origin_enabled = 0;
+            $origin_domain = '';
+            $hsts_enabled = 0;
+        }
+
+        // 步骤3：准备回源相关变量
+        if ($origin_enabled && $origin_domain) {
+            $proxy_host = $origin_domain; // 只影响 Host 头
+        } else {
+            $proxy_host = '$host';
+        }
+        $backend_ip = $siteConfig['origin_url']; // 始终用真实源站地址
+
+        // 步骤4：准备HSTS变量（仅HTTPS模板用）
+        $hsts_conf = '';
+        // 仅在启用HSTS且为HTTPS模板时赋值
+        // 这里不判断是否HTTPS，交由模板生成函数判断
+        if ($hsts_enabled) {
+            $hsts_conf = 'add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;';
+        }
+
+        // 步骤5：判断SSL和强制跳转状态
         if ($siteConfig['ssl_enabled'] == 0) {
-            generateTemplate1($sharedParams);  // 对应未开启HTTPS的模板生成函数
+            // 未开启SSL
+            generateTemplate1([
+                'domain' => $domain,
+                'pdo' => $pdo,
+                'backend_ip' => $backend_ip,
+                'proxy_host' => $proxy_host
+            ]);
             return;
         }
 
-        // 步骤2：已开启SSL，从ssl_certs表获取强制HTTPS状态（来自ssl-certs.php的数据表）
-        $sslCertStmt = $pdo->prepare("
-            SELECT force_https 
-            FROM ssl_certs 
-            WHERE domain = :domain
-        ");
+        // 已开启SSL，判断是否强制跳转
+        $sslCertStmt = $pdo->prepare("SELECT force_https FROM ssl_certs WHERE domain = :domain");
         $sslCertStmt->bindParam(':domain', $domain, PDO::PARAM_STR);
         $sslCertStmt->execute();
         $sslCert = $sslCertStmt->fetch(PDO::FETCH_ASSOC);
@@ -383,14 +415,26 @@ function determineTemplateGenerator($sharedParams) {
             throw new Exception("未找到域名 {$domain} 的SSL证书配置");
         }
 
-        // 情况2：已开启SSL且强制HTTPS（调用生成函数2）
         if ($sslCert['force_https'] == 1) {
-            generateTemplate2($sharedParams);  // 对应强制跳转HTTPS的模板生成函数
+            // 强制跳转HTTPS
+            generateTemplate2([
+                'domain' => $domain,
+                'pdo' => $pdo,
+                'backend_ip' => $backend_ip,
+                'proxy_host' => $proxy_host,
+                'hsts_conf' => $hsts_conf
+            ]);
             return;
         }
 
-        // 情况3：已开启SSL但未强制HTTPS（调用生成函数3）
-        generateTemplate3($sharedParams);  // 对应开启但不跳转的模板生成函数
+        // 已开启SSL但未强制跳转
+        generateTemplate3([
+            'domain' => $domain,
+            'pdo' => $pdo,
+            'backend_ip' => $backend_ip,
+            'proxy_host' => $proxy_host,
+            'hsts_conf' => $hsts_conf
+        ]);
 
     } catch (Exception $e) {
         throw new Exception("模板生成策略判断失败：{$e->getMessage()}");
@@ -400,45 +444,30 @@ function determineTemplateGenerator($sharedParams) {
 // ------------------------- 子功能函数（生成未开启HTTPS的Nginx配置） -------------------------
 /**
  * 生成未开启HTTPS的Nginx配置文件（对应模板：http.conf.php）
- * @param array $sharedParams 共享参数（包含domain和pdo）
+ * @param array $params 共享参数（包含domain、backend_ip、proxy_host）
  * @throws Exception 数据库查询或文件操作异常时抛出
  */
-function generateTemplate1($sharedParams) {
-    $domain = $sharedParams['domain'];
-    $pdo = $sharedParams['pdo'];
+function generateTemplate1($params) {
+    $domain = $params['domain'];
+    $backendIp = $params['backend_ip'];
+    $proxyHost = $params['proxy_host'];
 
     try {
-        // 步骤1：从site_config表获取后端服务器IP（origin_url字段）
-        $stmt = $pdo->prepare("SELECT origin_url FROM site_config WHERE domain = :domain");
-        $stmt->bindParam(':domain', $domain, PDO::PARAM_STR);
-        $stmt->execute();
-        $siteConfig = $stmt->fetch(PDO::FETCH_ASSOC);
+        $templatePath = __DIR__ . '/ngx-tpl/http.conf.php';
+        $outputDir = __DIR__ . '/config/conf';
+        $outputFile = "{$outputDir}/{$domain}.conf";
 
-        if (!$siteConfig || empty($siteConfig['origin_url'])) {
-            throw new Exception("未找到域名 {$domain} 的后端服务器地址");
-        }
-        $backendIp = $siteConfig['origin_url'];
-
-        // 步骤2：定义模板路径和输出路径（Linux系统路径格式）
-        $templatePath = __DIR__ . '/ngx-tpl/http.conf.php';  // 模板文件路径（当前目录/ngx-tpl/http.conf.php）
-        $outputDir = __DIR__ . '/config/conf';               // 输出目录（与步骤3定义的config/conf一致）
-        $outputFile = "{$outputDir}/{$domain}.conf";         // 输出文件路径（域名.conf）
-
-        // 步骤3：校验模板文件存在性
         if (!file_exists($templatePath)) {
             throw new Exception("未找到Nginx模板文件：{$templatePath}");
         }
 
-        // 步骤4：读取模板并替换变量（$domain和$backend_ip）
         $templateContent = file_get_contents($templatePath);
-        // 替换模板中的变量标记（注意：PHP模板
         $parsedContent = str_replace(
-            ['<?= $domain ?>', '<?= $backend_ip ?>'],
-            [$domain, $backendIp],
+            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>'],
+            [$domain, $backendIp, $proxyHost],
             $templateContent
         );
 
-        // 步骤5：写入配置文件并设置权限（644：所有者读写，其他用户读）
         if (file_put_contents($outputFile, $parsedContent, LOCK_EX) === false) {
             throw new Exception("Nginx配置文件写入失败：{$outputFile}");
         }
@@ -452,45 +481,31 @@ function generateTemplate1($sharedParams) {
 // ------------------------- 子功能函数（生成强制跳转HTTPS的Nginx配置） -------------------------
 /**
  * 生成强制跳转HTTPS的Nginx配置文件（对应模板：https-auto.conf.php）
- * @param array $sharedParams 共享参数（包含domain和pdo）
+ * @param array $params 共享参数（包含domain、backend_ip、proxy_host、hsts_conf）
  * @throws Exception 数据库查询或文件操作异常时抛出
  */
-function generateTemplate2($sharedParams) {
-    $domain = $sharedParams['domain'];
-    $pdo = $sharedParams['pdo'];
+function generateTemplate2($params) {
+    $domain = $params['domain'];
+    $backendIp = $params['backend_ip'];
+    $proxyHost = $params['proxy_host'];
+    $hstsConf = $params['hsts_conf'];
 
     try {
-        // 步骤1：从site_config表获取后端服务器IP（origin_url字段）
-        $stmt = $pdo->prepare("SELECT origin_url FROM site_config WHERE domain = :domain");
-        $stmt->bindParam(':domain', $domain, PDO::PARAM_STR);
-        $stmt->execute();
-        $siteConfig = $stmt->fetch(PDO::FETCH_ASSOC);
+        $templatePath = __DIR__ . '/ngx-tpl/https-auto.conf.php';
+        $outputDir = __DIR__ . '/config/conf';
+        $outputFile = "{$outputDir}/{$domain}.conf";
 
-        if (!$siteConfig || empty($siteConfig['origin_url'])) {
-            throw new Exception("未找到域名 {$domain} 的后端服务器地址");
-        }
-        $backendIp = $siteConfig['origin_url'];
-
-        // 步骤2：定义模板路径和输出路径（Linux系统路径格式）
-        $templatePath = __DIR__ . '/ngx-tpl/https-auto.conf.php';  // 强制跳转HTTPS模板路径
-        $outputDir = __DIR__ . '/config/conf';                     // 输出目录（与步骤3定义的config/conf一致）
-        $outputFile = "{$outputDir}/{$domain}.conf";               // 输出文件路径（域名.conf）
-
-        // 步骤3：校验模板文件存在性
         if (!file_exists($templatePath)) {
             throw new Exception("未找到Nginx模板文件：{$templatePath}");
         }
 
-        // 步骤4：读取模板并替换变量（$domain和$backend_ip）
         $templateContent = file_get_contents($templatePath);
-        // 替换模板中的变量标记（注意：PHP模板中的<?= $变
         $parsedContent = str_replace(
-            ['<?= $domain ?>', '<?= $backend_ip ?>'],
-            [$domain, $backendIp],
+            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>'],
+            [$domain, $backendIp, $proxyHost, $hstsConf],
             $templateContent
         );
 
-        // 步骤5：写入配置文件并设置权限（644：所有者读写，其他用户读）
         if (file_put_contents($outputFile, $parsedContent, LOCK_EX) === false) {
             throw new Exception("Nginx配置文件写入失败：{$outputFile}");
         }
@@ -501,39 +516,37 @@ function generateTemplate2($sharedParams) {
     }
 }
 
+// ------------------------- 子功能函数（生成基础版Nginx配置） -------------------------
 /**
  * 生成基础版Nginx配置（对应情况3：已开启SSL但未强制HTTPS）
- * @param array $sharedParams 共享参数（包含domain、backend_ip、pdo等）
+ * @param array $params 共享参数（包含domain、backend_ip、proxy_host、hsts_conf）
  * @throws Exception 配置生成失败时抛出异常
  */
-function generateTemplate3($sharedParams) {
-    $domain = $sharedParams['domain'];
-    $backendIp = $sharedParams['backend_ip'];  // 从共享参数获取后端IP
-    $outputDir = __DIR__ . '/config/conf';      // 输出目录（与步骤3创建的目录一致）
+function generateTemplate3($params) {
+    $domain = $params['domain'];
+    $backendIp = $params['backend_ip'];
+    $proxyHost = $params['proxy_host'];
+    $hstsConf = $params['hsts_conf'];
 
     try {
-        // 步骤1：读取模板文件内容
         $templatePath = __DIR__ . '/ngx-tpl/tpl_basic.conf.php';
+        $outputDir = __DIR__ . '/config/conf';
+        $outputFile = "{$outputDir}/{$domain}.conf";
+
         if (!file_exists($templatePath)) {
             throw new Exception("模板文件不存在：{$templatePath}");
         }
+
         $templateContent = file_get_contents($templatePath);
+        $parsedContent = str_replace(
+            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>'],
+            [$domain, $backendIp, $proxyHost, $hstsConf],
+            $templateContent
+        );
 
-        // 步骤2：替换模板中的动态变量（使用输出缓冲处理PHP模板语法）
-        ob_start();
-        extract($sharedParams);  // 将共享参数导入当前符号表（使模板能直接使用$domain、$backend_ip）
-        eval('?>' . $templateContent);  // 执行模板中的PHP
-        $finalContent = ob_get_clean();
-
-        // 步骤3：定义输出文件路径（格式：域名.conf）
-        $outputFile = "{$outputDir}/{$domain}.conf";
-
-        // 步骤4：写入配置文件（使用LOCK_EX防止并发写入冲突）
-        if (file_put_contents($outputFile, $finalContent, LOCK_EX) === false) {
+        if (file_put_contents($outputFile, $parsedContent, LOCK_EX) === false) {
             throw new Exception("配置文件写入失败：{$outputFile}");
         }
-
-        // 步骤5：设置文件权限（所有者读写，其他用户读）
         chmod($outputFile, 0600);
 
     } catch (Exception $e) {
