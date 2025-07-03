@@ -40,6 +40,8 @@ include ROOT_PATH . 'auth.php'; // 集成中心验证文件（核心安全控制
         <label for="cc" class="function-label">CC防护</label>
         <input type="radio" id="ip-list" name="function" class="function-radio" value="ip-list">
         <label for="ip-list" class="function-label">黑白名单</label>
+        <input type="radio" id="more" name="function" class="function-radio" value="more">
+        <label for="more" class="function-label">高级设置</label>
     </div>
 
     <div id="subFormContainer">
