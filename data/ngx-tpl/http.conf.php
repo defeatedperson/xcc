@@ -15,7 +15,7 @@ server {
     # 代理 favicon.ico（动态 IP）
     location = /favicon.ico {
         proxy_pass <?= $backend_ip ?>/favicon.ico;
-        proxy_set_header Host $host;
+        proxy_set_header Host <?= $proxy_host ?>;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         access_log off;
@@ -28,7 +28,7 @@ server {
     # 反向代理（动态 IP）
     location @backend {
         proxy_pass <?= $backend_ip ?>;
-        proxy_set_header Host $host;
+        proxy_set_header Host <?= $proxy_host ?>;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
