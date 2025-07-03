@@ -48,6 +48,31 @@ if (!isset($_SESSION['session_id_rotation_time']) || (time() - $_SESSION['sessio
     $_SESSION['session_id_rotation_time'] = time();
 }
 
+function getClientIp() {
+    $headers = [
+        'HTTP_X_FORWARDED_FOR', // 可能有多个IP，用第一个
+        'HTTP_X_REAL_IP',
+        'HTTP_CLIENT_IP',
+        'HTTP_CF_CONNECTING_IP', // Cloudflare
+        'HTTP_X_FORWARDED',
+        'HTTP_X_CLUSTER_CLIENT_IP',
+        'HTTP_FORWARDED_FOR',
+        'HTTP_FORWARDED'
+    ];
+    foreach ($headers as $key) {
+        if (!empty($_SERVER[$key])) {
+            $ipList = explode(',', $_SERVER[$key]);
+            foreach ($ipList as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return $ip;
+                }
+            }
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
 // 已登录用户直接跳转
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     header("Location: dashboard.php");
@@ -89,7 +114,7 @@ if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{
 }
 
 // IP封禁检查（保持原有逻辑）
-$clientIp = $_SERVER['REMOTE_ADDR'];
+$clientIp = getClientIp();
 $banKey = 'ban_' . $clientIp;
 if (isset($_SESSION[$banKey]) && $_SESSION[$banKey]['times'] >= 5) {
     if (time() - $_SESSION[$banKey]['last_failed_time'] < 1800) {
@@ -127,7 +152,7 @@ unset($_SESSION['slider_verified_time']);
 
 // 新增：记录登录成功日志（仅成功时记录）
 $logDir = __DIR__ . '/login-log'; // 日志目录路径（当前文件夹下的login-log）
-$clientIp = $_SERVER['REMOTE_ADDR'];
+$clientIp = getClientIp();
 $loginTime = date('Y-m-d H:i:s'); // 登录时间（格式化）
 
 // 校验客户端IP有效性（IPv4/IPv6格式校验）
