@@ -153,6 +153,17 @@ try {
         writeDeleteLog("admin_updates表不存在，跳过删除", $domain);
     }
 
+    // 4.7 more_settings表（自定义回源设置 more.php对应表）
+    if ($checkTableExists('more_settings')) {
+        $stmt = $pdo->prepare("DELETE FROM more_settings WHERE domain = ?");
+        $stmt->execute([$domain]);
+        $deletedCounts['more_settings'] = $stmt->rowCount();
+        writeDeleteLog("more_settings表删除{$deletedCounts['more_settings']}条记录", $domain);
+    } else {
+        $deletedCounts['more_settings'] = 0;
+        writeDeleteLog("more_settings表不存在，跳过删除", $domain);
+    }
+
     // 校验主配置是否实际删除（避免删除不存在的域名）
     if ($deletedCounts['site_config'] === 0) {
         $pdo->rollback();
