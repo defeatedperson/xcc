@@ -121,14 +121,32 @@ if (!move_uploaded_file($uploadFile, $cachedFilePath)) {
     exit;
 }
 
-// 立即返回成功响应（关键修改）
-http_response_code(200);
-echo json_encode([
+// 立即返回成功响应，并断开客户端连接，兼容 nginx+php-fpm 和 Apache
+$response = [
     'success' => true,
     'message' => '文件已成功接收，正在后台处理',
     'cached_file' => basename($cachedFilePath)
-]);
-fastcgi_finish_request(); // 发送响应并断开客户端连接（需服务器支持FastCGI）
+];
+
+if (function_exists('fastcgi_finish_request')) {
+    // FastCGI 环境（nginx+php-fpm）
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    fastcgi_finish_request();
+} else {
+    // 兼容 Apache mod_php 或其他环境
+    ignore_user_abort(true);
+    set_time_limit(0);
+    ob_start();
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    header('Connection: close');
+    header('Content-Length: ' . ob_get_length());
+    ob_end_flush();
+    flush();
+}
 
 // 后台处理逻辑（关键新增）
 try {
