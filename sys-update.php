@@ -50,6 +50,13 @@ try {
         exit;
     }
 
+    // ========== 新增：检测ZIP扩展 ==========
+    if (!extension_loaded('zip')) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => '服务器未启用ZIP扩展，无法解压更新包，请联系服务器管理员启用ZIP扩展']);
+        exit;
+    }
+
     // ========== 超简化更新流程 ==========
     
     // 1. 先定义所有路径 - 顺序很重要!
