@@ -10,6 +10,15 @@ server {
     #hsts配置
     <?= $hsts_conf ?>
 
+    # 专门处理 ACME 挑战请求的 location
+    location ^~ /.well-known/acme-challenge/ {
+        proxy_pass <?= $autossl ?>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     # SSL 配置（动态路径）
     ssl_certificate /usr/local/openresty/nginx/conf/certs/<?= $domain ?>.crt;
     ssl_certificate_key /usr/local/openresty/nginx/conf/certs/<?= $domain ?>.key;
