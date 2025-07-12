@@ -193,7 +193,7 @@ include 'header.php';
             </form>
         </div>
     </div>
-    <!-- 提示模块 -->
+        <!-- 提示模块 -->
     <div class="main-content">
         <div class="tutorial-box">
             <h3>① 自动SSL什么时候触发？</h3>
@@ -201,16 +201,25 @@ include 'header.php';
                 <li>每天执行一次，一次申请一个证书，到期前30天会尝试自动续签。</li>
                 <li>建议先绑定一个正常的SSL证书，之后程序会自动运行。</li>
             </ol>
-            <h3>① 什么是XDM调度节点？</h3>
+            <h3>② 自动SSL有什么优势？</h3>
             <ol>
-                <li><b>XDM</b>全名“星尘DNS监控”服务</li>
+                <li>无需手动更新证书，系统自动处理证书申请和续签流程。</li>
+                <li>减少证书过期导致网站不可访问的风险。</li>
+            </ol>
+            <h3>③ 为什么限制仅20个额度？</h3>
+            <ol>
+                <li>考虑到单线程程序限制+系统定位个人版（小规模），仅20个域名免费额度。</li>
+            </ol>
+            <h3>④ 什么是XDM调度节点？</h3>
+            <ol>
+                <li><b>XDM</b>全名"星尘DNS监控"服务</li>
                 <li>自动SSL/自动故障转移需要依赖这个额外服务。</li>
             </ol>
-            <h3>② XDM的配置要求是什么？</h3>
+            <h3>⑤ XDM的配置要求是什么？</h3>
             <ol>
                 <li>有IPV4公网的服务器（含NAT共享IP），内存建议1G起步。</li>
             </ol>
-            <h3>③ 如何安装XDM调度节点？</h3>
+            <h3>⑥ 如何安装XDM调度节点？</h3>
             <ol>
                 <li>教程请访问<a href="https://re.xcdream.com/9311.html" target="_blank">https://re.xcdream.com/9311.html</a>查看XDM教程</li>
             </ol>
