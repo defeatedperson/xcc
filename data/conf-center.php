@@ -430,6 +430,9 @@ function generateTemplate2($params) {
     $backendIp = $params['backend_ip'];
     $proxyHost = $params['proxy_host'];
     $hstsConf = $params['hsts_conf'];
+    
+    // 获取autossl值，如果未设置则使用后端IP
+    $autossl = getAutoSslUrl($backendIp);
 
     try {
         $templatePath = __DIR__ . '/ngx-tpl/https-auto.conf.php';
@@ -442,8 +445,8 @@ function generateTemplate2($params) {
 
         $templateContent = file_get_contents($templatePath);
         $parsedContent = str_replace(
-            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>'],
-            [$domain, $backendIp, $proxyHost, $hstsConf],
+            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>', '<?= $autossl ?>'],
+            [$domain, $backendIp, $proxyHost, $hstsConf, $autossl],
             $templateContent
         );
 
@@ -468,6 +471,9 @@ function generateTemplate3($params) {
     $backendIp = $params['backend_ip'];
     $proxyHost = $params['proxy_host'];
     $hstsConf = $params['hsts_conf'];
+    
+    // 获取autossl值，如果未设置则使用后端IP
+    $autossl = getAutoSslUrl($backendIp);
 
     try {
         $templatePath = __DIR__ . '/ngx-tpl/tpl_basic.conf.php';
@@ -480,8 +486,8 @@ function generateTemplate3($params) {
 
         $templateContent = file_get_contents($templatePath);
         $parsedContent = str_replace(
-            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>'],
-            [$domain, $backendIp, $proxyHost, $hstsConf],
+            ['<?= $domain ?>', '<?= $backend_ip ?>', '<?= $proxy_host ?>', '<?= $hsts_conf ?>', '<?= $autossl ?>'],
+            [$domain, $backendIp, $proxyHost, $hstsConf, $autossl],
             $templateContent
         );
 
@@ -492,6 +498,32 @@ function generateTemplate3($params) {
 
     } catch (Exception $e) {
         throw new Exception("生成基础版Nginx配置失败：{$e->getMessage()}");
+    }
+}
+
+/**
+ * 获取ACME服务URL，如果未设置则返回后端IP
+ * @param string $backendIp 后端服务器IP（作为默认值）
+ * @return string ACME服务URL或后端IP
+ */
+function getAutoSslUrl($backendIp) {
+    try {
+        $xdmDbFile = __DIR__ . '/db/xdm.db';
+        if (file_exists($xdmDbFile)) {
+            $xdmDb = new SQLite3($xdmDbFile);
+            $result = $xdmDb->query('SELECT service_url FROM api_keys WHERE id = 1');
+            $row = $result->fetchArray(SQLITE3_ASSOC);
+            $xdmDb->close();
+            
+            if ($row && !empty($row['service_url'])) {
+                return $row['service_url'];
+            }
+        }
+        // 如果数据库不存在或service_url为空，返回后端IP
+        return $backendIp;
+    } catch (\Exception $e) {
+        // 出现异常时也返回后端IP
+        return $backendIp;
     }
 }
 
