@@ -1,0 +1,168 @@
+/* 证书表格样式 - 使用与domain-table一致的样式 */
+.cert-table {
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+    margin-top: 15px;
+    min-width: 800px;
+}
+
+.cert-table th,
+.cert-table td {
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.cert-table th {
+    background-color: #f8f8f8;
+    font-weight: 600;
+    color: #333;
+}
+
+.cert-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* 证书状态样式 */
+.status-valid {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.status-attention {
+    color: #fd7e14;
+    font-weight: 500;
+}
+
+.status-warning {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.status-expired {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.status-unknown {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* 响应式表格 */
+@media (max-width: 768px) {
+    .cert-table {
+        font-size: 14px;
+    }
+    
+    .cert-table th,
+    .cert-table td {
+        padding: 8px 10px;
+    }
+    
+    /* 在小屏幕上优化表格显示 */
+    .cert-table th:first-child,
+    .cert-table td:first-child {
+        width: 50px;
+    }
+}
+
+/* 超小屏幕适配 */
+@media (max-width: 480px) {
+    .cert-table {
+        font-size: 12px;
+    }
+    
+    .cert-table th,
+    .cert-table td {
+        padding: 6px 8px;
+    }
+}
+
+/* 添加隐藏元素的CSS类，替代内联样式 */
+.hidden {
+    display: none;
+}
+
+/* 证书上传表单样式 */
+.cert-form {
+    margin-top: 5px;
+    padding: 0 0 15px 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.cert-textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.cert-textarea:focus {
+    border-color: #2196F3;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 0;
+}
+
+.btn-upload {
+    padding: 8px 16px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-upload:hover {
+    background-color: #1976D2;
+}
+
+.upload-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.upload-status.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.upload-status.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* 响应式表单 */
+@media (max-width: 768px) {
+    .cert-textarea {
+        min-height: 120px;
+    }
+}

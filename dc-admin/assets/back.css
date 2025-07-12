@@ -1,0 +1,46 @@
+/* 定义项目主色调变量（新增青绿色作为辅助色） */
+:root {
+    --primary-blue: #2196F3;   /* 主色亮蓝色 */
+    --light-blue: #E3F2FD;     /* 浅蓝辅助色 */
+    --accent-cyan: #00BCD4;    /* 新增：青绿色（与亮蓝色协调的辅助色） */
+    --white: #FFFFFF;          /* 白色 */
+    --animation-duration: 15s; /* 动画总时长 */
+}
+
+/* 基础背景容器样式（修改渐变背景为三色过渡） */
+.background-anim-container {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden; /* 仅隐藏横向滚动（避免与子容器滚动冲突） */
+    overflow-y: auto; /* 保留纵向滚动 */
+    /* 新增：亮蓝→青绿→浅蓝三色渐变（增强流动层次感） */
+    background: linear-gradient(45deg, 
+        var(--primary-blue) 20%, 
+        var(--accent-cyan) 50%,  /* 新增青绿色过渡点 */
+        var(--light-blue) 80%
+    );
+    background-size: 200% 200%;
+    animation: gradient-flow var(--animation-duration) ease-in-out infinite; /* 渐变流动动画 */
+}
+
+/* 渐变流动动画（通过改变背景位置实现颜色流动效果） */
+@keyframes gradient-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 移动端适配：宽度小于768px时暂停渐变动画 */
+@media (max-width: 768px) {
+    .background-anim-container {
+        animation: none; /* 停止渐变流动动画 */
+        background-position: 0% 50%; /* 固定渐变初始位置 */
+    }
+}

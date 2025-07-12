@@ -1,0 +1,239 @@
+.node-mo {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px
+}
+
+.node-mo2 {
+    margin: 10px 20px 20px 20px;
+}
+
+.update-time {
+    margin-top: 10px;
+    color: #757575;
+    font-size: 0.9rem;
+}
+
+.node-status-section {
+    margin-bottom: 20px;
+}
+
+.node-status-section h3 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.node-status-list {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.node-item {
+    padding: 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    display: inline-block;
+}
+
+.node-item:last-child {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.apikey-form {
+    margin-top: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #2196F3;
+}
+
+/* 下拉选择框美化样式 */
+.form-group select, .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* 使用CSS三角形替代SVG图标 */
+    background-image: none;
+    position: relative;
+    cursor: pointer;
+}
+
+/* 添加CSS三角形作为下拉箭头 */
+.form-group select:after, .form-control:after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #757575;
+    pointer-events: none;
+}
+
+/* 添加箭头容器 */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper:after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #757575;
+    pointer-events: none;
+}
+
+.form-group select:focus, .form-control:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.form-group select option {
+    padding: 8px;
+}
+
+/* 美化下拉选择框 */
+#sslDomain {
+    height: 38px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#sslDomain:hover {
+    border-color: #bbbbbb;
+}
+
+.apikey-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.apikey-submit {
+    padding: 6px 12px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.input-with-button {
+    display: flex;
+    gap: 10px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.input-with-button button {
+    white-space: nowrap;
+}
+
+/* 故障转移表格样式 */
+.status-normal {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.status-fault {
+    color: #F44336;
+    font-weight: bold;
+}
+
+.btn-edit, .btn-delete {
+    padding: 3px 8px;
+    margin: 0 2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-edit {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #F44336;
+    color: white;
+}
+
+/* 表单样式 */
+#failoverFormContainer {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+#failoverForm .form-group {
+    margin-bottom: 15px;
+}
+
+#failoverForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#failoverForm input, #failoverForm select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* 表单容器样式 */
+.form-container {
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}

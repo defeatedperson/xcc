@@ -1,0 +1,108 @@
+.index_title {
+    font-size: 24px;
+    margin: 0; /* 重置h1默认margin，避免额外垂直空间 */
+    color: #2196F3;
+}
+.index {
+    display: flex;
+    flex-direction: column; /* 新增：垂直排列子元素 */
+}
+.cards {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    display: flex;
+    gap: 10px; /* 卡片间横向间距 */
+    flex-wrap: wrap; /* 小屏幕自动换行 */
+}
+.card {
+    flex: 1; /* 卡片等比分配宽度 */
+    min-width: 200px; /* 最小宽度防止内容挤压 */
+    padding: 20px;
+    background-color: #F8F8F8;
+    border-radius: 8px; /* 圆角 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* 轻量阴影 */
+    text-align: center; /* 内容居中 */
+}
+.card div:first-child {
+    font-size: 14px;
+    color: #666; /* 次级文字颜色 */
+    margin-bottom: 8px;
+}
+.card div:last-child {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50; /* 主数据颜色 */
+}
+.chart-container {
+    margin: 10px 10px; 
+    padding: 10px;
+    background: white; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); 
+    height: 500px; /* 限制最大高度 */
+    position: relative; /* 为画布定位提供参考 */
+}
+.chart-container canvas {
+    max-width: 100% !important; /* 强制画布宽度不超过容器 */
+    max-height: calc(100% - 40px) !important; /* 减去标题高度（假设标题高40px） */
+}
+.index-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; /* 关键：子元素垂直居中对齐 */
+    gap: 20px;
+    padding: 10px 20px; /* 统一容器内边距，避免元素贴边 */
+}
+.filter-select {
+    min-width: 200px;
+    padding: 8px 32px 8px 12px; /* 内边距调整，保证文字垂直居中 */
+    font-size: 14px;
+    color: #2c3e50;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    height: 40px; /* 明确高度，与标题行高（24px字体+上下8px内边距）一致 */
+}
+.filter-select:hover {
+    border-color: #2196F3; /* 悬停时边框变蓝（与标题色一致） */
+}
+.filter-select:focus {
+    outline: none; /* 移除浏览器默认聚焦外框 */
+    border-color: #2196F3; /* 聚焦时边框变蓝 */
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1); /* 蓝色阴影提示聚焦 */
+}
+.time-range-group label {
+    display: flex;
+    align-items: center; /* 标签内元素（单选框+文字）垂直居中 */
+    gap: 5px; /* 单选框与文字间距 */
+    cursor: pointer;
+    line-height: 1; /* 重置默认行高，避免文字偏移 */
+}
+.time-range-group input[type="radio"] {
+    width: 16px; /* 统一单选框大小 */
+    height: 16px;
+    margin: 0; /* 重置默认margin */
+}
+
+
+.time-range-group {
+    display: flex;
+    gap: 15px; /* 替代原内联的 gap: 15px */
+}
+.time-range-group label {
+    display: flex;
+    align-items: center; /* 标签内元素（单选框+文字）垂直居中 */
+    gap: 5px; /* 单选框与文字间距 */
+    cursor: pointer;
+    line-height: 1; /* 重置默认行高，避免文字偏移 */
+}
+.chart-title {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}

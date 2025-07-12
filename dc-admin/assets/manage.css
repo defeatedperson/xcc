@@ -1,0 +1,88 @@
+
+    
+.manage-section {
+    overflow-x: auto; /* 关键：宽度不足时显示横向滚动条 */
+     padding: 0 20px 20px; /* 容器内边距，避免滚动条贴边 */
+     margin-top: 0px;
+     -webkit-overflow-scrolling: touch; /* 关键：增强移动端滚动体验 */
+ }
+ .domain-table {
+     width: 100%;
+     background-color: white;
+     border-collapse: collapse;
+     margin-top: 15px;
+     min-width: 800px; /* 关键：设置表格最小宽度（根据列数调整） */
+ }
+ .domain-table th, .domain-table td {
+     padding: 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+    white-space: nowrap; /* 防止内容换行（保持单行显示） */
+}
+ .domain-table th {
+     background-color: #f8f8f8;
+     font-weight: 600;
+ }
+ 
+
+/* 新增：加载动画样式 */
+.loading {
+   text-align: center;
+   padding: 20px;
+   color: #666;
+   position: relative;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.loading::before {
+   content: "";
+   width: 18px;
+   height: 18px;
+   border: 2px solid #e0e0e0;
+   border-top-color: #2196F3;
+   border-radius: 50%;
+   animation: loading-spin 1s linear infinite;
+   margin-right: 10px;
+}
+
+@keyframes loading-spin {
+   to { transform: rotate(360deg); }
+}
+
+/* 美化同步状态提示 */
+#syncStatusTip {
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: inline-block;
+    background-color: darkcyan;
+    color: white;
+    border: 1.5px solid #b3d8fd;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.05);
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* 域名表格按钮容器样式 - 确保水平排列 */
+.domain-table td:last-child {
+    min-width: 180px;    /* 确保足够宽度容纳两个按钮 */
+    white-space: nowrap; /* 防止内容换行 */
+}
+
+/* 域名表格按钮样式 - 确保水平间距 */
+.domain-table button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #ff4444;
+    color: white;
+    margin-right: 8px;   /* 按钮之间的间距 */
+    display: inline-block; /* 确保水平排列 */
+}
+
+/* 清理缓存按钮使用不同颜色区分 */
+.domain-table .clear-cache-btn {
+    background-color: #2196F3;
+}

@@ -1,0 +1,158 @@
+/* 子表单整体样式（与cc_form保持一致） */
+.sub-form {
+    padding: 10px;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+/* 左右容器布局（默认一行两列，小屏幕换行） */
+.list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* 左右区域间距 */
+}
+
+/* 左侧已设置规则区域 */
+.existing-rules {
+    flex: 1;
+    min-width: 200px; /* 小屏幕换行临界宽度 */
+    opacity: 0;
+    /* 新增：动画配置（0.6秒缓出，保持最终状态） */
+    animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* 右侧添加表单区域 */
+.add-form {
+    flex: 1;
+    min-width: 200px; /* 小屏幕换行临界宽度 */
+    opacity: 0;
+    /* 新增：动画配置（0.6秒缓出，保持最终状态） */
+    animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* 分区标题样式 */
+.sub-form h4 {
+    color: #2c3e50;
+    font-size: 16px;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0; /* 底部分割线 */
+}
+
+/* 已设置规则列表样式优化 */
+.rule-list {
+    border: 1px solid #e0e0e0; /* 添加外边框 */
+    border-radius: 6px;
+    overflow: hidden; /* 配合圆角 */
+}
+
+.rule-item {
+    padding: 12px 15px;
+    margin-bottom: 0; /* 移除原有间距 */
+    background: #ffffff; /* 恢复白色背景 */
+    border-bottom: 1px solid #e0e0e0; /* 内部分隔线 */
+    transition: background-color 0.2s ease;
+}
+.rule-item:last-child {
+    border-bottom: none; /* 最后一项无下边框 */
+}
+.rule-item:hover {
+    background: #f8f9fa; /* 悬停反馈 */
+}
+
+.rule-info {
+    display: flex;
+    justify-content: space-between; /* 内容与按钮左右对齐 */
+    align-items: center; /* 垂直居中 */
+    gap: 15px;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.rule-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 新增删除按钮样式 */
+.btn-delete {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 3px;
+    background-color: #dc3545; /* 红色警示色 */
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+}
+.btn-delete:hover {
+    background-color: #c82333; /* 悬停加深 */
+}
+
+/* 表单分组样式 */
+.sub-form .form-group {
+    margin-bottom: 15px;
+}
+.sub-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+/* 输入框/下拉框样式（与cc_form一致） */
+.sub-form .list-type,
+.sub-form .list-input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    background: white;
+}
+.sub-form .list-type:focus,
+.sub-form .list-input:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* 添加按钮样式 */
+.button-group {
+    margin-top: 20px;
+}
+.btn-add {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+.btn-add:hover {
+    background-color: #1976D2;
+}
+
+.no-rule-tip {
+    display: none; padding: 15px; text-align: center; color: #7f8c8d;
+}
+
+/* 新增：从右向左滑动的关键帧动画 */
+@keyframes slideInRight {
+    from {
+        transform: translateX(0); /* 初始位置：原位置 */
+        opacity: 0.9; 
+    }
+    50% {
+        transform: translateX(10px); /* 中间状态：向右偏移5px */
+        opacity: 0.8; 
+    }
+    to {
+        transform: translateX(0); /* 最终位置：回到原位置 */
+        opacity: 1; /* 保持完全显示 */
+    }
+}
