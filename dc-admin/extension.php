@@ -90,14 +90,14 @@ include 'header.php';
                     <tr><td colspan="8" class="loading">加载中...</td></tr>
                 </tbody>
             </table>
-            <div class="update-time">Tips:下线具有更高优先级。节点下线之后会持续10-30分钟。数据5分钟同步一次。</div>
+            <div class="update-time">Tips:下线具有更高优先级。节点下线之后会持续10-30分钟。数据5分钟同步一次。请不要同时在本页面+腾讯云控制台创建相同的解析！</div>
         </div>
         <!-- 表单容器 -->
         <div class="form-container hidden" id="failoverFormContainer">
             <form id="failoverForm" class="apikey-form">
                 <input type="hidden" id="domainId" value="">
                 <div class="form-group">
-                    <label for="host">host值</label>
+                    <label for="host">host值(请勿添加腾讯云已添加的host值)</label>
                     <input type="text" id="host" placeholder="请输入host值（字母数字和小数点，最多5位）">
                 </div>
                 <div class="form-group">
@@ -128,7 +128,7 @@ include 'header.php';
                     <label for="line">线路</label>
                     <select id="line">
                         <option value="默认">默认</option>
-                        <option value="海外">海外</option>
+                        <option value="境外">境外</option>
                         <option value="电信">电信</option>
                         <option value="联通">联通</option>
                         <option value="移动">移动</option>
@@ -196,6 +196,11 @@ include 'header.php';
     <!-- 提示模块 -->
     <div class="main-content">
         <div class="tutorial-box">
+            <h3>① 自动SSL什么时候触发？</h3>
+            <ol>
+                <li>每天执行一次，一次申请一个证书，到期前30天会尝试自动续签。</li>
+                <li>建议先绑定一个正常的SSL证书，之后程序会自动运行。</li>
+            </ol>
             <h3>① 什么是XDM调度节点？</h3>
             <ol>
                 <li><b>XDM</b>全名“星尘DNS监控”服务</li>
