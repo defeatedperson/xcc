@@ -5,7 +5,20 @@
 server {
     listen 80;
     server_name <?= $domain ?>;
-    return 301 https://$host$request_uri;
+    
+    # 专门处理 ACME 挑战请求的 location
+    location ^~ /.well-known/acme-challenge/ {
+        proxy_pass <?= $autossl ?>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # 其他所有请求重定向到HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
 }
 
 server {
