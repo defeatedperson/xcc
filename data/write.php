@@ -140,14 +140,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['action'] === 'save_domain') 
 
                 // 写入默认CC防护规则（参考cc_form.php的默认值）
                 $defaultCCRules = [
-                    'interval' => 60,          // 全局统计时间（秒）
-                    'threshold' => 100,        // 全局触发请求数
+                    'interval' => 10,          // 全局统计时间（秒）
+                    'threshold' => 500,        // 全局触发请求数
                     'valid_duration' => 300,   // 全局验证有效期（秒）
                     'max_try' => 3,            // 全局最大尝试次数
                     'custom_rules' => [
-                        'interval' => 30,      // 个人统计时间（秒）
-                        'threshold' => 50,     // 个人触发请求数
-                        'max_threshold' => 200 // 个人最大封禁请求数
+                        'interval' => 10,      // 个人统计时间（秒）
+                        'threshold' => 300,     // 个人触发请求数
+                        'max_threshold' => 1000 // 个人最大封禁请求数
                     ]
                 ];
                 $jsonData = json_encode($defaultCCRules);
