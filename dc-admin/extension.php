@@ -90,7 +90,7 @@ include 'header.php';
                     <tr><td colspan="8" class="loading">加载中...</td></tr>
                 </tbody>
             </table>
-            <div class="update-time">Tips:下线具有更高优先级。节点下线之后会持续10-30分钟。数据5分钟同步一次。请不要同时在本页面+腾讯云控制台创建相同的解析！</div>
+            <div class="update-time">Tips:节点下线之后会持续10-30分钟。数据5分钟同步一次。请不要同时在本页面+腾讯云控制台创建相同的解析！TCPING检测80/443端口</div>
         </div>
         <!-- 表单容器 -->
         <div class="form-container hidden" id="failoverFormContainer">
@@ -137,7 +137,7 @@ include 'header.php';
                 <div class="form-group">
                     <label for="jkType">监控方式</label>
                     <select id="jkType">
-                        <option value="ping">PING</option>
+                        <option value="ping">TCPING</option>
                         <option value="monitor">XDM被控</option>
                     </select>
                 </div>
