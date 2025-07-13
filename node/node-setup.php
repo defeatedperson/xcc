@@ -67,8 +67,46 @@ if ($action === 'start_install') {
 
     // 拼接多步一键命令
     $installCommand = 'curl -fsSL ' . $setupShellUrl . ' -o setup-node.sh && chmod +x setup-node.sh && ./setup-node.sh';
+    
+    // 4. 从数据库获取 apikey 和 nodekey 数据
+    // 数据库文件路径
+    $dbFile = $_SERVER['DOCUMENT_ROOT'] . '/data/db/xdm.db';
+    $hasXdmData = false;
+    
+    if (file_exists($dbFile)) {
+        try {
+            $db = new SQLite3($dbFile);
+            $db->enableExceptions(true);
+            
+            // 查询API密钥
+            $result = $db->query('SELECT apikey, nodekey FROM api_keys WHERE id = 1');
+            if ($result) {
+                $row = $result->fetchArray(SQLITE3_ASSOC);
+                if ($row && !empty($row['apikey']) && !empty($row['nodekey'])) {
+                    $masterKey = $row['apikey'];
+                    $nodeKey = $row['nodekey'];
+                    $hasXdmData = true;
+                }
+            }
+            
+            $db->close();
+        } catch (Exception $e) {
+            // 如果数据库访问失败，记录错误日志
+            error_log('无法访问XDM数据库: ' . $e->getMessage());
+        }
+    }
+    
+    // 如果数据库不存在或无数据，返回提示信息
+    if (!$hasXdmData) {
+        echo json_encode([
+            'success' => false, 
+            'message' => 'xdm扩展未设置，相关组件将无法安装',
+            'install_mode' => 0
+        ]);
+        exit;
+    }
 
-    // 4. 读取php模板并替换变量
+    // 5. 读取php模板并替换变量
     $templatePath = __DIR__ . '/setup-template.php';
     if (!is_file($templatePath)) {
         echo json_encode(['success' => false, 'message' => '未找到模板文件', 'install_mode' => 0]);
@@ -76,29 +114,37 @@ if ($action === 'start_install') {
     }
     $templateContent = file_get_contents($templatePath);
     $renderedContent = str_replace(
-        ['{{DOWNLOAD_URL}}', '{{MASTER_ADDR}}'],
-        [htmlspecialchars($downloadUrl, ENT_QUOTES, 'UTF-8'), htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8')],
+        ['{{DOWNLOAD_URL}}', '{{MASTER_ADDR}}', '{{MASTER_KEY}}', '{{NODE_KEY}}'],
+        [
+            htmlspecialchars($downloadUrl, ENT_QUOTES, 'UTF-8'), 
+            htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($masterKey, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($nodeKey, ENT_QUOTES, 'UTF-8')
+        ],
         $templateContent
     );
-    // 5. 创建setup-node.sh文件（最终生成的文件）
+    
+    // 6. 创建setup-node.sh文件（最终生成的文件）
     file_put_contents($setupShellPath, $renderedContent);
 
-    // 6. 创建get.json文件，存入加密的token内容
+    // 7. 创建get.json文件，存入加密的token内容
     $getJsonPath = __DIR__ . '/get.json';
     $tokenHash = password_hash($token, PASSWORD_DEFAULT);
     file_put_contents($getJsonPath, json_encode(['token' => $tokenHash], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
-    // 7. 新增：生成 bash.json，存放安装命令
+    // 8. 新增：生成 bash.json，存放安装命令
     $bashJsonPath = __DIR__ . '/bash.json';
     file_put_contents($bashJsonPath, json_encode(['install_command' => $installCommand], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
-    // 8. 返回渲染后的内容和安装命令
+    // 9. 返回渲染后的内容和安装命令
     echo json_encode([
         'success' => true,
         'download_url' => $downloadUrl,
         'install_command' => $installCommand,
         'template' => $renderedContent,
-        'install_mode' => 1
+        'install_mode' => 1,
+        'master_key' => $masterKey,
+        'node_key' => $nodeKey
     ]);
     exit;
 }
