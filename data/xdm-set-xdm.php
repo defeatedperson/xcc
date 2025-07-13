@@ -59,7 +59,7 @@ try {
     // 初始化API密钥记录（如果不存在）
     $result = $db->query("SELECT COUNT(*) FROM api_keys");
     if ($result->fetchArray()[0] == 0) {
-        $db->exec("INSERT INTO api_keys (id, apikey, nodekey, service_url) VALUES (1, 'api3554ferge', 'api3554ferge', '')");
+        $db->exec("INSERT INTO api_keys (id, apikey, nodekey, service_url) VALUES (1, '', '', '')");
     }
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => '数据库连接失败: ' . $e->getMessage()]);
