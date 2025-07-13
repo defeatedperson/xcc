@@ -27,14 +27,14 @@ function loadCCRules(domain) {
 
 // 恢复默认值逻辑
 document.querySelector('.btn-reset').addEventListener('click', function() {
-    document.getElementById('global-stat-time').value = '60';
-    document.getElementById('global-req-limit').value = '100';
+    document.getElementById('global-stat-time').value = '10';
+    document.getElementById('global-req-limit').value = '500';
     document.getElementById('global-verify-expiry').value = '300';
     document.getElementById('global-try-limit').value = '3';
 
-    document.getElementById('personal-stat-time').value = '30';
-    document.getElementById('personal-req-limit').value = '50';
-    document.getElementById('personal-max-req').value = '200';
+    document.getElementById('personal-stat-time').value = '10';
+    document.getElementById('personal-req-limit').value = '300';
+    document.getElementById('personal-max-req').value = '1000';
 });
 
 // 输入框校验逻辑（新增）
