@@ -1345,6 +1345,19 @@ EOF
 
         # 解压 /xdmnode/setup.zip 到 /xdmnode 目录
         if [ -f /xdmnode/setup.zip ]; then
+            # 检查 unzip 是否已安装，如未安装则自动安装
+            if ! command -v unzip &>/dev/null; then
+                echo "未检测到 unzip 工具，正在安装..."
+                apt-get update
+                apt-get -y install unzip
+                if ! command -v unzip &>/dev/null; then
+                    echo "unzip 安装失败，请手动安装后重试。"
+                    exit 1
+                else
+                    echo "unzip 安装成功。"
+                fi
+            fi
+            
             echo "开始解压 /xdmnode/setup.zip 到 /xdmnode ..."
             unzip -o /xdmnode/setup.zip -d /xdmnode
             if [ $? -eq 0 ]; then
