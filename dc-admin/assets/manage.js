@@ -280,7 +280,7 @@ function loadDomainList() {
                     <td>${domain.id}</td>
                     <td>${domain.domain}</td>
                     <td>${domain.origin_url}</td>
-                    <td>${domain.ssl_enabled === "0" ? "未启用" : `证书[${domain.ssl_enabled}]`}</td>
+                    <td>${Number(domain.ssl_enabled) === 0 ? "未启用" : "已启用"}</td>
                     <td>${domain.protection_enabled === "1" ? "自定义" : "默认"}</td>
                     <td>
                         <button data-domain="${domain.domain}" class="delete-btn">删除</button>
