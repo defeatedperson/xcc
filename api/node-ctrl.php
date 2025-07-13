@@ -63,6 +63,10 @@ if ($receivedCsrfToken !== $_SESSION['csrf_token']) {
 
 // 获取并验证参数
 $nodeId = $_POST['node_id'] ?? '';
+if (!$nodeId || !is_numeric($nodeId) || (int)$nodeId <= 0) {
+    sendResponse(false, '无效的节点ID（需为正整数）', null, 400);
+}
+$nodeId = (int)$nodeId;  // 强制转换为整数
 $command = $_POST['command'] ?? '';
 $action = $_POST['action'] ?? '';
 $logType = $_POST['log_type'] ?? '';
@@ -80,7 +84,8 @@ try {
 
     // 查询节点信息
     $stmt = $pdo->prepare("SELECT node_key, node_ip FROM nodes WHERE id = :id LIMIT 1");
-    $stmt->execute([':id' => $nodeId]);
+    $stmt->bindValue(':id', $nodeId, PDO::PARAM_INT);
+    $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$row) {
