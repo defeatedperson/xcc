@@ -81,7 +81,7 @@ $(document).ready(function() {
                     <td>${domain.main_type}: ${domain.main_value}</td>
                     <td>${domain.backup_type}: ${domain.backup_value}</td>
                     <td>${domain.line}</td>
-                    <td>${domain.jk_type === 'ping' ? 'PING' : 'XDM'}</td>
+                    <td>${domain.jk_type === 'ping' ? 'TCPING' : 'XDM'}</td>
                     <td class="${statusClass}">${statusText}</td>
                     <td>
                         <button class="btn-edit" data-id="${id}">编辑</button>
