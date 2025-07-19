@@ -108,7 +108,7 @@ try {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         
         $response = curl_exec($ch);
@@ -149,7 +149,7 @@ try {
                 curl_setopt($ch2, CURLOPT_POSTFIELDS, $nginxPost);
                 curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, true);
+                curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
                 curl_setopt($ch2, CURLOPT_TIMEOUT, 20);
                 $nginxResp = curl_exec($ch2);
                 $nginxHttpCode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
