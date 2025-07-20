@@ -48,9 +48,10 @@ nginx伪静态规则在安装的时候会显示
 
 #### docker部署
 1. 创建文件夹`sudo mkdir -p /opt/xcc-app`
-2. 创建文件`sudo touch /opt/xcc-app/site.json`
-3. 拉取镜像`docker pull defeatedperson/xcc-app:latest`
-4. 运行镜像
+2. `sudo mkdir -p /opt/xcc-app/config`
+3. 创建文件`sudo touch /opt/xcc-app/site.json`
+4. 拉取镜像`docker pull defeatedperson/xcc-app:latest`
+5. 运行镜像
     docker run -d \
       -p 8080:80 \
       --name xcc-app-instance \
@@ -58,6 +59,7 @@ nginx伪静态规则在安装的时候会显示
       -v xcc_auth_data:/var/www/html/auth/data \
       -v xcc_api_db:/var/www/html/api/db \
       -v xcc_data_db:/var/www/html/data/db \
+      -v xcc_data_config:/var/www/html/data/config \
       -v /opt/xcc-app/site.json:/var/www/html/node/site.json \
       defeatedperson/xcc-app:latest
 
